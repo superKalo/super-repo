@@ -88,21 +88,23 @@ class Repository {
     }
 };
 
-
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['dependency'], factory);
-    } else if (typeof module === 'object' && module.exports) {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
-        module.exports = factory(require('dependency'));
+        define(['exports', 'b'], function (exports, b) {
+            factory((root.commonJsStrictGlobal = exports), b);
+        });
+    } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
+        // CommonJS
+        factory(exports, require('b'));
     } else {
-        // Browser globals (root is window)
-        root.returnExports = factory(root.dependency);
+        // Browser globals
+        factory((root.commonJsStrictGlobal = {}), root.b);
     }
-}(this, function (dependency) {
-    // Use dependency in some fashion.
-    return Repository;
+}(this, function (exports, b) {
+    // Use b in some fashion.
+
+    // attach properties to the exports object to define
+    // the exported module properties.
+    exports.action = Repository;
 }));
