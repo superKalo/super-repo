@@ -16,7 +16,8 @@ class Repository {
     }
 
     /**
-     * Checks weather the data is up to date or not.
+     * Checks if repository the data is up to date or not.
+     *
      * @return {Boolean}
      */
     _isDataUpToDate(_localStore) {
@@ -43,10 +44,11 @@ class Repository {
     }
 
     /**
-     * Get current weather.
+     * Access the repository data.
+     *
      * @return {Promise}
      */
-    get(){
+    getData(){
         const localData = JSON.parse( window.localStorage.getItem(this.config.name) );
 
         if (this._isDataUpToDate(localData)) {
@@ -69,11 +71,11 @@ class Repository {
             const { lastFetched } = localData;
             const diff = new Date().valueOf() - lastFetched;
 
-            this.syncInterval = setInterval( () => this.get(), diff);
+            this.syncInterval = setInterval( () => this.getData(), diff);
         } else {
-            this.get().then(r => {
+            this.getData().then(r => {
                 this.syncInterval = setInterval(
-                    () => this.get(), this.config.cacheLimit
+                    () => this.getData(), this.config.cacheLimit
                 );
 
                 return r;
