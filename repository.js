@@ -31,7 +31,7 @@ class Repository {
         const isLimitExceeded =
             (new Date().valueOf() - lastFetched) > this.config.cacheLimit;
 
-        return isLimitExceeded;
+        return ! isLimitExceeded;
     }
 
     _storeData(_data) {
@@ -45,15 +45,19 @@ class Repository {
      * Get current weather.
      * @return {Promise}
      */
-    init(){
-        const localData = JSON.parse( window.localStorage.getItem(this.name) );
+    get(){
+        const localData = JSON.parse( window.localStorage.getItem(this.config.name) );
 
         if (this._isDataUpToDate(localData)) {
-            return new Promise(_resolve => _resolve(localData));
+            return new Promise(_resolve => _resolve(localData.data));
         }
 
         return this.config.request
             .then(this._normalizeData.bind(this))
-            .then(this._storeData.bind(this));
+            .then(response => {
+                this._storeData(response);
+
+                return response;
+            });
     }
 };
