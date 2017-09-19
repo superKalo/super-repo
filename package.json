@@ -1,0 +1,22 @@
+{
+  "name": "repository-datastore",
+  "version": "1.0.1",
+  "description": "Implements JavaScript Repository Pattern",
+  "main": "repository.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/superKalo/repository.git"
+  },
+  "keywords": [
+    "repository"
+  ],
+  "author": "Kaloyan Kosev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/superKalo/repository/issues"
+  },
+  "homepage": "https://github.com/superKalo/repository#readme"
+}
