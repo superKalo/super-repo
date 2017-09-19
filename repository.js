@@ -27,10 +27,9 @@ class Repository {
         }
 
         const { lastFetched } = _localStore;
-        const updateLimit = 15 * 1000; // 15 minutes
 
         const isLimitExceeded =
-            (new Date().valueOf() - lastFetched) > updateLimit;
+            (new Date().valueOf() - lastFetched) > this.config.cacheLimit;
 
         return isLimitExceeded;
     }
