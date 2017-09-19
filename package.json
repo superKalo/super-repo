@@ -1,6 +1,6 @@
 {
   "name": "repository-datastore",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Implements JavaScript Repository Pattern",
   "main": "repository.js",
   "scripts": {
