@@ -4,11 +4,14 @@ class Repository {
         this.config = config;
     }
 
-    _normalizeData(response = { w: 31, t: 32, p: 1024 }) {
-        // TODO: Fix me.
-        return Object.keys(this.config.dataModel).map( key => ({
-            [key]: response[this.config.dataModel[key]]
-        }));
+    _normalizeData(_response) {
+        const obj = {};
+
+        Object.keys(this.config.dataModel).forEach(
+            key => obj[key] = _response[this.config.dataModel[key]]
+        );
+
+        return obj;
     }
 
     /**
