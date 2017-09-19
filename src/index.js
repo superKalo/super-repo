@@ -92,14 +92,16 @@ class Repository {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define([], function () {
-            // Also create a global in case some scripts
-            // that are loaded still are looking for
-            // a global even when an AMD loader is in use.
-            return (root.Repository = factory());
+            return (root.returnExportsGlobal = factory());
         });
+    } else if (typeof module === 'object' && module.exports) {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory();
     } else {
         // Browser globals
-        root.Repository = factory();
+        root.returnExportsGlobal = factory();
     }
 }(this, function () {
     // Just return a value to define the module export.
