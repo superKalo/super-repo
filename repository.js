@@ -2,6 +2,7 @@ class Repository {
 
     constructor(config) {
         this.config = config;
+        this.syncInterval = null;
     }
 
     _normalizeData(_response) {
@@ -52,12 +53,35 @@ class Repository {
             return new Promise(_resolve => _resolve(localData.data));
         }
 
-        return this.config.request
+        return this.config.request()
             .then(this._normalizeData.bind(this))
             .then(response => {
                 this._storeData(response);
 
                 return response;
             });
+    }
+
+    initSyncer() {
+        const localData = JSON.parse( window.localStorage.getItem(this.config.name) );
+
+        if (this._isDataUpToDate(localData)) {
+            const { lastFetched } = localData;
+            const diff = new Date().valueOf() - lastFetched;
+
+            this.syncInterval = setInterval( () => this.get(), diff);
+        } else {
+            this.get().then(r => {
+                this.syncInterval = setInterval(
+                    () => this.get(), this.config.cacheLimit
+                );
+
+                return r;
+            });
+        }
+    }
+
+    destroySyncer() {
+        this.syncInterval = null;
     }
 };
