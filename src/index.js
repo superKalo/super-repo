@@ -84,22 +84,22 @@ class Repository {
     }
 
     initSyncer() {
-        const localData = JSON.parse( window.localStorage.getItem(this.config.name) );
+        this.storage.get(this.config.name).then(_localData => {
+            if (this._isDataUpToDate(_localData)) {
+                const { lastFetched } = _localData;
+                const diff = new Date().valueOf() - lastFetched;
 
-        if (this._isDataUpToDate(localData)) {
-            const { lastFetched } = localData;
-            const diff = new Date().valueOf() - lastFetched;
+                this.syncInterval = setInterval( () => this.getData(), diff);
+            } else {
+                this.getData().then(r => {
+                    this.syncInterval = setInterval(
+                        () => this.getData(), this.config.cacheLimit
+                    );
 
-            this.syncInterval = setInterval( () => this.getData(), diff);
-        } else {
-            this.getData().then(r => {
-                this.syncInterval = setInterval(
-                    () => this.getData(), this.config.cacheLimit
-                );
-
-                return r;
-            });
-        }
+                    return r;
+                });
+            }
+        });
     }
 
     destroySyncer() {
