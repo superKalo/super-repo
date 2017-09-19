@@ -83,18 +83,26 @@ class Repository {
         });
     }
 
+    _initSyncInterval(_interval) {
+        this.syncInterval = setInterval(
+            () => this.getData(), _interval
+        );
+    }
+
     initSyncer() {
         this.storage.get(this.config.name).then(_localData => {
             if (this._isDataUpToDate(_localData)) {
                 const { lastFetched } = _localData;
                 const diff = new Date().valueOf() - lastFetched;
 
-                this.syncInterval = setInterval( () => this.getData(), diff);
+                this.syncInterval = this._initSyncInterval(diff);
+
+                setTimeout( () => {
+                    this.syncInterval = this._initSyncInterval(this.config.cacheLimit);
+                }, diff);
             } else {
                 this.getData().then(r => {
-                    this.syncInterval = setInterval(
-                        () => this.getData(), this.config.cacheLimit
-                    );
+                    this.syncInterval = this._initSyncInterval(this.config.cacheLimit)
 
                     return r;
                 });
