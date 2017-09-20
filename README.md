@@ -1,6 +1,6 @@
 # Repository Library!
 
-An abstraction, that implements best practices for receiving and storing data locally (on the Browser).
+An abstraction, that implements best practices for working with and storing data on the client-side.
 
 Please read [my article my CSS-Trick post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd). Simply said, the idea of this library is to be your **Repository pattern abstraction** and therefore - to make the way you work with and store remote data more maintainable & scalable :dark_sunglasses: 
 
@@ -36,7 +36,7 @@ This package can be installed with:
 
 ## Usage
 
-First, define a method that fetches the data. To get your data, use FetchAPI or jQuery's $.ajax() or plain XMLHttpRequest or whatever you want. **As long as you return a Promise it will work!**.
+First, define a method that fetches the data. To get your data, use FetchAPI or jQuery's $.ajax() or plain XMLHttpRequest or whatever you want. **As long as you return a Promise it will work!**
 
 ```javascript
 const fetchWeatherData = () => fetch('weather.json').then(r => r.json());
@@ -56,7 +56,7 @@ Let's assume we have a weather API. It returns us the temperature, feels-like, w
 
 Then, we're ready to define our Repository.
 
-Define where your want to store the data **[1]** - in this example, in the LocalStorage. Then - the name of your data repository **[2]** - it's used for the LocalStorage key. Finally, define when the data will get out of date **[3]**. If the data will never get out of date, you can set `cacheLimit` to `-1`.
+Define where your want to store the data **`[1]`** - in this example, in the LocalStorage. Then - the name of your data repository **`[2]`** - it's used for the LocalStorage key. Finally, define when the data will get out of date **`[3]`**. If the data will never get out of date, you can set `cacheLimit` to `-1`.
 
 ```javascript
 const WeatherRepository = new Repository({
@@ -72,7 +72,7 @@ const WeatherRepository = new Repository({
 });
 ```
 
-Then [4], define your data model and set custom attribute names for each response items. Why this is a good idea:
+Then **`[4]`**, define your data model and set custom attribute names for each response items. Why this is a good idea:
 - Throughout our codebase via WeatherRepository.getData() we access meaningful and semantic attributes like `.temperature` and `.windspeed` instead of `t` and `s`.
 - We expose only parameters we need and we simply don't include (hide) all others.
 - If the response attributes names change (or we need to wire-up another API with different response structure), we only need to tweak it here - in only 1 place of our codebase.
