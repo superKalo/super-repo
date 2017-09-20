@@ -35,7 +35,7 @@ class BrowserStorageAdapter {
     set(_storageName, _data) {
         return new Promise(_resolve =>
             this.browser.storage.local.set({
-                _storageName: _data
+                [_storageName]: _data
             }, _resolve)
         );
     }
