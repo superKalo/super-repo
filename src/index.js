@@ -12,6 +12,35 @@ class LocalStorageAdapter {
     }
 }
 
+class BrowserStorageAdapter {
+    constructor() {
+        /**
+         * Extension API model is currently being standardized to browser.xxx,
+         * and some browsers are defining their own namespaces in the meantime
+         * (for example, Edge is using msBrowser), see:
+         *
+         * {@link https://gist.github.com/superKalo/7cee019a3a6a3f0e231b6b4840b5d701}
+         */
+        this.browser = window.msBrowser || window.browser || window.chrome;
+    }
+
+    get(_storageName) {
+        return new Promise(_resolve =>
+            this.browser.storage.local.get(_storageName, _response =>
+                _resolve(_response[_storageName])
+            )
+        );
+    }
+
+    set(_storageName, _data) {
+        return new Promise(_resolve =>
+            this.browser.storage.local.set({
+                _storageName: _data
+            }, _resolve)
+        );
+    }
+}
+
 class LocalVariableAdapter {
     constructor(_this) {
         this.context = _this;
@@ -26,6 +55,7 @@ class LocalVariableAdapter {
     }
 }
 
+
 class Repository {
 
     constructor(_config) {
@@ -36,6 +66,9 @@ class Repository {
         switch(this.config.storage) {
             case 'LOCAL_VARIABLE':
                 this.storage = new LocalVariableAdapter(this);
+                break;
+            case 'BROWSER_STORAGE':
+                this.storage = new BrowserStorageAdapter();
                 break;
             case 'LOCAL_STORAGE':
             default:
