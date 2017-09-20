@@ -111,6 +111,16 @@ class Repository {
     }
 
     /**
+     * After the data model is applied,
+     * mapping the response gives an option for further processing the data.
+     */
+    _mapData(_response) {
+        const { mapData } = this.config;
+
+        return typeof mapData === 'function' ? mapData(_response) : _response;
+    }
+
+    /**
      * Checks if repository the data is up to date or not.
      *
      * @return {Boolean}
@@ -178,6 +188,7 @@ class Repository {
                 } else {
                     this.config.request()
                         .then(this._normalizeData.bind(this))
+                        .then(this._mapData.bind(this))
                         .then(response => {
                             this._storeData(response);
                             this.isPromisePending = false;
