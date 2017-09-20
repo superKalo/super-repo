@@ -83,9 +83,34 @@ None.
 
 ## Documentation
 
+## Options
+- **`storage`** [required] | default: `'LOCAL_DTORE'` | all: `'LOCAL_DTORE'`, `'BROWSER_STORE'` or `'LOCAL_VARIABLE'`
+
+    // TODO: Describe me.
+
+- **`name`** [required] | type: `String`
+
+    // TODO: Describe me.
+    
+- **`request`** [required] | type: `Function`
+
+    // TODO: Describe me.
+
+- **`dataModel`** [required] | type: `Object` or `Array`
+
+- **`cacheLimit`** [optional] | default: `-1` | type: `Number`
+
+    // TODO: Describe me.
+
+- **`mapData`** [optional] | type: `Function`
+
+## Methods
+
+- `storage`
+
 
 ## Contributing
 I'm open to ideas and suggestions! If you want to contribute or simply you've cought a bug - you can either open an issue or clone the repository, tweak the `src/index.js` file and fire a Pull Request. There are no *fancy* build steps.
 
 ## License
-The code and the documentation are released under the MIT License.
+The code and the documentation are released under the [MIT License](https://github.com/superKalo/repository/blob/master/LICENSE).
