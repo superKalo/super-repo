@@ -1,8 +1,24 @@
+class LocalStorageAdapter {
+    get(_storageName) {
+        return new Promise(_resolve => _resolve(
+            JSON.parse(window.localStorage.getItem(_storageName))
+        ));
+    }
+
+    set(_storageName, _data) {
+        return new Promise(_resolve => _resolve(
+            window.localStorage.setItem(_storageName, JSON.stringify(_data))
+        ));
+    }
+}
+
 class Repository {
 
     constructor(config) {
         this.config = config;
         this.syncInterval = null;
+
+        this.storage = new LocalStorageAdapter();
     }
 
     _normalizeData(_response) {
@@ -37,10 +53,10 @@ class Repository {
     }
 
     _storeData(_data) {
-        window.localStorage.setItem(this.config.name, JSON.stringify({
+        this.storage.set(this.config.name, {
             lastFetched: new Date().valueOf(),
             data: _data
-        }));
+        });
     }
 
     /**
@@ -49,38 +65,51 @@ class Repository {
      * @return {Promise}
      */
     getData(){
-        const localData = JSON.parse( window.localStorage.getItem(this.config.name) );
+        const localData = this.storage.get(this.config.name);
 
-        if (this._isDataUpToDate(localData)) {
-            return new Promise(_resolve => _resolve(localData.data));
-        }
+        return new Promise(_resolve => {
+            localData.then(_localData => {
+                if (this._isDataUpToDate(_localData)) {
+                    _resolve(_localData.data);
+                } else {
+                    this.config.request()
+                        .then(this._normalizeData.bind(this))
+                        .then(response => {
+                            this._storeData(response);
 
-        return this.config.request()
-            .then(this._normalizeData.bind(this))
-            .then(response => {
-                this._storeData(response);
-
-                return response;
+                            return response;
+                        })
+                        .then(_resolve);
+                }
             });
+        });
+    }
+
+    _initSyncInterval(_interval) {
+        this.syncInterval = setInterval(
+            () => this.getData(), _interval
+        );
     }
 
     initSyncer() {
-        const localData = JSON.parse( window.localStorage.getItem(this.config.name) );
+        this.storage.get(this.config.name).then(_localData => {
+            if (this._isDataUpToDate(_localData)) {
+                const { lastFetched } = _localData;
+                const diff = new Date().valueOf() - lastFetched;
 
-        if (this._isDataUpToDate(localData)) {
-            const { lastFetched } = localData;
-            const diff = new Date().valueOf() - lastFetched;
+                this.syncInterval = this._initSyncInterval(diff);
 
-            this.syncInterval = setInterval( () => this.getData(), diff);
-        } else {
-            this.getData().then(r => {
-                this.syncInterval = setInterval(
-                    () => this.getData(), this.config.cacheLimit
-                );
+                setTimeout( () => {
+                    this.syncInterval = this._initSyncInterval(this.config.cacheLimit);
+                }, diff);
+            } else {
+                this.getData().then(r => {
+                    this.syncInterval = this._initSyncInterval(this.config.cacheLimit)
 
-                return r;
-            });
-        }
+                    return r;
+                });
+            }
+        });
     }
 
     destroySyncer() {
@@ -88,6 +117,14 @@ class Repository {
     }
 };
 
+
+/**
+ * Uses Node, AMD or browser globals to create a module. This example creates
+ * a global even when AMD is used. This is useful if you have some scripts
+ * that are loaded by an AMD loader, but they still want access to globals.
+ *
+ * {@link https://github.com/umdjs/umd/blob/master/templates/returnExportsGlobal.js}
+ */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.

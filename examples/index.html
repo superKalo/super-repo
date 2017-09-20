@@ -14,8 +14,7 @@
 
     const WeatherRepository = new Repository({
         name: 'weather',
-        request: () => fetch('http://httpstat.us/200')
-                    .then(() => ({ w: 30, t: 31, p: 1024})), // Promise!
+        request: () => fetch('weather.json').then(r => r.json()), // Promise!
         dataModel: {
             temperature: 't',
             windspeed: 'w',
