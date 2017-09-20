@@ -83,7 +83,7 @@ None.
 
 ## Documentation
 
-## Options
+### Options
 - **`storage`** [required] | default: `'LOCAL_DTORE'` | all: `'LOCAL_DTORE'`, `'BROWSER_STORE'` or `'LOCAL_VARIABLE'`
 
     // TODO: Describe me.
@@ -98,16 +98,37 @@ None.
 
 - **`dataModel`** [required] | type: `Object` or `Array`
 
+    // TODO: Describe me.
+
 - **`cacheLimit`** [optional] | default: `-1` | type: `Number`
 
     // TODO: Describe me.
 
 - **`mapData`** [optional] | type: `Function`
 
-## Methods
+    // TODO: Describe me.
 
-- `storage`
+### Methods
 
+- **`.getData()`**
+
+    // TODO: Describe me.
+    
+- **`.invalidateData()`**
+
+    // TODO: Describe me.
+
+- **`.clearData()`**
+
+    // TODO: Describe me.
+
+- **`.initSyncer()`**
+
+    // TODO: Describe me.
+
+- **`.destroySyncer()`**
+
+    // TODO: Describe me.
 
 ## Contributing
 I'm open to ideas and suggestions! If you want to contribute or simply you've cought a bug - you can either open an issue or clone the repository, tweak the `src/index.js` file and fire a Pull Request. There are no *fancy* build steps.
