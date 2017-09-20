@@ -39,7 +39,7 @@ This package can be installed with:
 First, define a method that fetches the data. To get your data, use FetchAPI or jQuery's $.ajax() or plain XMLHttpRequest or whatever you want. **As long as you return a Promise it will work!**
 
 ```javascript
-const fetchWeatherData = () => fetch('weather.json').then(r => r.json());
+const requestWeatherData = () => fetch('weather.json').then(r => r.json());
 ```
 
 Let's assume we have a weather API. It returns us the temperature, feels-like, wind speed (m/s), pressure (hPa) and humidity (%). A common pattern, in order for the JSON response to be as slim as possible, attributes are compressed up to the first letter. So here’s what we receive from the server:
@@ -63,7 +63,7 @@ const WeatherRepository = new Repository({
     storage: 'LOCAL_STORAGE',                   // [1]
     name: 'weather',                            // [2]
     cacheLimit: 5 * 1000, // 5 seconds          // [3]
-    request: fetchWeatherData, // Promise!
+    request: requestWeatherData, // Promise!
     dataModel: {                                // [4]
         temperature: 't',
         windspeed: 'w',
@@ -76,3 +76,16 @@ Then **`[4]`**, define your data model and set custom attribute names for each r
 - Throughout our codebase via WeatherRepository.getData() we access meaningful and semantic attributes like `.temperature` and `.windspeed` instead of `t` and `s`.
 - We expose only parameters we need and we simply don't include (hide) all others.
 - If the response attributes names change (or we need to wire-up another API with different response structure), we only need to tweak it here - in only 1 place of our codebase.
+
+## Dependencies
+
+None.
+
+## Documentation
+
+
+## Contributing
+I'm open to ideas and suggestions! If you want to contribute or simply you've cought a bug - you can either open an issue or clone the repository, tweak the `src/index.js` file and fire a Pull Request. There are no *fancy* build steps.
+
+## License
+The code and the documentation are released under the MIT License.
