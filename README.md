@@ -106,23 +106,23 @@ None.
 
     In case the server returns a single Object, you can use the following syntax:
 
-        ```javascript
-        dataModel: {
-            temperature: 't',
-            windspeed: 'w',
-            pressure: 'p'
-        }
-        ```
+    ```javascript
+    dataModel: {
+        temperature: 't',
+        windspeed: 'w',
+        pressure: 'p'
+    }
+    ```
 
     In case the server returns an Array of items, you can use the following syntax:
 
-        ```javascript
-        dataModel: [{
-            temperature: 't',
-            windspeed: 'w',
-            pressure: 'p'
-        }]
-        ```
+    ```javascript
+    dataModel: [{
+        temperature: 't',
+        windspeed: 'w',
+        pressure: 'p'
+    }]
+    ```
 
 - **`cacheLimit`** [optional] | default: `-1` | type: `Number`
 
@@ -132,22 +132,22 @@ None.
 
     After the `dataModel` is applied, if you need any further manipulation data manipulation, you can hook on this method. For example, let's say the server sends the temperature in Celsius and you want to convert it to Fahrenheit:
 
-        ```javascript
-        dataModel: [{
-            temperature: 't',
-            windspeed: 'w',
-            pressure: 'p'
-        }],
-        mapData: data => {
-            // Convert to Fahrenheit
-            const temperature = (data.temperature * 1.8) + 32;
+    ```javascript
+    dataModel: [{
+        temperature: 't',
+        windspeed: 'w',
+        pressure: 'p'
+    }],
+    mapData: data => {
+        // Convert to Fahrenheit
+        const temperature = (data.temperature * 1.8) + 32;
 
-            // These two sways the same
-            const { windspeed, pressure } = data;
+        // These two sways the same
+        const { windspeed, pressure } = data;
 
-            return { temperature, windspeed, pressure };
-        }
-        ```
+        return { temperature, windspeed, pressure };
+    }
+    ```
 
 ### Methods
 
