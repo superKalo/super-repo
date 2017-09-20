@@ -10,6 +10,12 @@
 
 <script src="../src/index.js"></script>
 
+<button id="invalidate" type="button">Invalidate</button>
+<button id="get" type="button">Get</button>
+<button id="clear" type="button">Clear</button>
+<button id="sync" type="button">Init Syncer</button>
+<button id="stopsync" type="button">Stop Syncer</button>
+
 <script>
 
     const WeatherRepository = new Repository({
@@ -25,7 +31,23 @@
 
     WeatherRepository.getData().then( r => console.log(r.temperature) );
 
-    // WeatherRepository.initSyncer();
+
+    document.getElementById('invalidate').addEventListener("click", () => {
+        WeatherRepository.invalidateData();
+    });
+    document.getElementById('get').addEventListener("click", () => {
+        WeatherRepository.getData().then( r => console.log(r.temperature) );
+    });
+    document.getElementById('clear').addEventListener("click", () => {
+        WeatherRepository.clearData();
+    });
+
+    document.getElementById('sync').addEventListener("click", () => {
+        WeatherRepository.initSyncer();
+    });
+    document.getElementById('stopsync').addEventListener("click", () => {
+        WeatherRepository.destroySyncer();
+    });
 
 </script>
 
