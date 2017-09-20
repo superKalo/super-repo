@@ -88,9 +88,9 @@ None.
 
     The preferred client-side storage. The options are:
 
-        - [Local Storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) (`'LOCAL_STORAGE'`)
-        - [Browser (local) Storage](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/) if you're building a browser extension (`'BROWSER_STORAGE'`)
-        - Storing the data in a local `.data` variable, attached to the class instance (`'LOCAL_VARIABLE'`)
+    - [Local Storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) (`'LOCAL_STORAGE'`)
+    - [Browser (local) Storage](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/) if you're building a browser extension (`'BROWSER_STORAGE'`)
+    - Storing the data in a local `.data` variable, attached to the class instance (`'LOCAL_VARIABLE'`)
 
 - **`name`** [required] | type: `String`
 
