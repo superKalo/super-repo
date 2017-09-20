@@ -12,13 +12,36 @@ class LocalStorageAdapter {
     }
 }
 
+class LocalVariableAdapter {
+    constructor(_this) {
+        this.context = _this;
+    }
+
+    get(_storageName) {
+        return new Promise(_resolve => _resolve(this.context.data));
+    }
+
+    set(_storageName, _data) {
+        return new Promise(_resolve => _resolve(this.context.data = _data));
+    }
+}
+
 class Repository {
 
-    constructor(config) {
-        this.config = config;
+    constructor(_config) {
+        this.config = _config;
         this.syncInterval = null;
+        this.data = null;
 
-        this.storage = new LocalStorageAdapter();
+        switch(this.config.storage) {
+            case 'LOCAL_VARIABLE':
+                this.storage = new LocalVariableAdapter(this);
+                break;
+            case 'LOCAL_STORAGE':
+            default:
+                this.storage = new LocalStorageAdapter();
+                break;
+        }
     }
 
     _normalizeData(_response) {
