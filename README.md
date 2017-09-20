@@ -162,19 +162,19 @@ None.
     });
     ```
 
-- **`.invalidateData()`**
+- **`.invalidateData()`** | Returns: `Promise`
 
     Invalidates data by setting a flag. It **doesn't delete the data from the storage**. However, the very next time when the `.getData()` method is invoked, it will directly call the server to get fresh data.
 
-- **`.clearData()`**
+- **`.clearData()`**  | Returns: `Promise`
 
     Deletes the data from the storage. Therefore, the very next time when the `.getData()` method is invoked, it will directly call the server to get fresh data.
 
-- **`.initSyncer()`**
+- **`.initSyncer()`** | Returns: `void`
 
     Initiates a setInterval, which will countdown to the point when the data is out of date (based on the `cacheLimit` value) and will trigger a server request to get fresh data.
 
-- **`.destroySyncer()`**
+- **`.destroySyncer()`**  | Returns: `void`
 
     Destroys the setInterval, initiated by the `.initSyncer()` method.
 
