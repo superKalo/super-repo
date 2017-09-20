@@ -176,7 +176,7 @@ None.
 
 - **`.destroySyncer()`**
 
-    Destroys the setInterval`, initiated by the `.initSyncer()` method.
+    Destroys the setInterval, initiated by the `.initSyncer()` method.
 
 
 ## Contributing
