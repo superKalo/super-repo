@@ -1,4 +1,4 @@
-# Repository Library!
+# SuperRepo - Implements Repository-ish Pattern For Your Data
 
 An abstraction, that implements best practices for working with and storing data on the client-side.
 
