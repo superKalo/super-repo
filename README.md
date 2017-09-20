@@ -57,7 +57,7 @@ Then, we're ready to define our Repository.
 Define where your want to store the data **[1]** - in this example, in the LocalStorage. Then - the name of your data repository **[2]** - it's used for the LocalStorage key. Finally, define when the data will get out of date **[3]**. If the data will never get out of date, you can set `cacheLimit` to `-1`.
 
 ```javascript
-const WeatherRepository = new Repository({
+const WeatherRepository = new SuperRepo({
     storage: 'LOCAL_STORAGE',                   // [1]
     name: 'weather',                            // [2]
     cacheLimit: 5 * 1000, // 5 seconds          // [3]

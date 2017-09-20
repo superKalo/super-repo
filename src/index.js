@@ -56,7 +56,7 @@ class LocalVariableAdapter {
 }
 
 
-class Repository {
+class SuperRepo {
 
     constructor(_config) {
         this.config = _config;
