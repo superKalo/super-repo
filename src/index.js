@@ -78,13 +78,27 @@ class Repository {
     }
 
     _normalizeData(_response) {
-        const obj = {};
+        const { dataModel } = this.config;
 
-        Object.keys(this.config.dataModel).forEach(
-            key => obj[key] = _response[this.config.dataModel[key]]
-        );
+        if (Array.isArray(dataModel)) {
+            return _response.map( item => {
+                const obj = {};
 
-        return obj;
+                Object.keys(dataModel[0]).forEach(
+                    key => obj[key] = item[dataModel[0][key]]
+                );
+
+                return obj;
+            });
+        } else {
+            const obj = {};
+
+            Object.keys(dataModel).forEach(
+                key => obj[key] = _response[dataModel[key]]
+            );
+
+            return obj;
+        }
     }
 
     /**
@@ -94,7 +108,9 @@ class Repository {
      */
     _isDataUpToDate(_localStore) {
         const isDataMissing =
-            _localStore === null || Object.keys(_localStore.data).length === 0;
+            _localStore === null || // Local Storage
+            typeof _localStore === 'undefined' || // Browser Storage
+            Object.keys(_localStore.data).length === 0;
 
         if (isDataMissing) {
             return false;
