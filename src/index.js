@@ -63,6 +63,15 @@ class Repository {
         this.syncInterval = null;
         this.data = null;
 
+        /**
+         * Helper variables to hold the currently pending Promise (this.promise)
+         * and to determine if a Promise is currently pending or not.
+         *
+         * {@link https://stackoverflow.com/a/36294256/1333836}
+         */
+        this.promise = null;
+        this.isPromisePending = false;
+
         switch(this.config.storage) {
             case 'LOCAL_VARIABLE':
                 this.storage = new LocalVariableAdapter(this);
@@ -154,9 +163,15 @@ class Repository {
      * @return {Promise}
      */
     getData(){
+        // If there is a Promise pending, wait for it, do not fire another one!
+        if (this.isPromisePending) {
+            return this.promise;
+        }
+
+        this.isPromisePending = true;
         const localData = this.storage.get(this.config.name);
 
-        return new Promise(_resolve => {
+        return this.promise = new Promise(_resolve => {
             localData.then(_localData => {
                 if (this._isDataUpToDate(_localData)) {
                     _resolve(_localData.data);
@@ -165,6 +180,7 @@ class Repository {
                         .then(this._normalizeData.bind(this))
                         .then(response => {
                             this._storeData(response);
+                            this.isPromisePending = false;
 
                             return response;
                         })
