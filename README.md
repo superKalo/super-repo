@@ -2,37 +2,39 @@
 
 An abstraction, that implements best practices for receiving and storing data locally (on the Browser).
 
-# Install
+Please read [my article my CSS-Trick post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd). Simply said, the idea of this library is to be your **Repository pattern abstraction** and therefore - to make the way you work with and store remote data more maintainable & scalable :dark_sunglasses: 
+
+## Install
 
 This package can be installed with:
 
 - [npm](https://www.npmjs.com/package/repository-datastore): `npm install --save repository-datastore`
 
-Or [download the [latest release](https://github.com/superKalo/repository/releases).
+- Or simply download the [latest release](https://github.com/superKalo/repository/releases).
 
 
-# Load
+## Load
 
-## Static HTML
+- Static HTML
 
-```html
-<script src="/node_modules/repository-datastore/src/index.js"></script>
-```
+    ```html
+    <script src="/node_modules/repository-datastore/src/index.js"></script>
+    ```
 
-## Using ES6 Imports
+- Using ES6 Imports
 
-```javascript
-// If a transpiler is configured (like Traceur Compiler, Babel, Rollup or Webpack):
-import Repository from 'repository-datastore';
-```
+    ```javascript
+    // If a transpiler is configured (like Traceur Compiler, Babel, Rollup or Webpack):
+    import Repository from 'repository-datastore';
+    ```
 
-## Using CommonJS Imports
-```javascript
-// If a module loader is configured (like RequireJS, Browserify or Neuter):
-const MyModule = require('my-npm-module');
-```
+- Using CommonJS Imports
+    ```javascript
+    // If a module loader is configured (like RequireJS, Browserify or Neuter):
+    const MyModule = require('my-npm-module');
+    ```
 
-# Usage
+## Usage
 
 First, define a method that fetches the data. To get your data, use FetchAPI or jQuery's $.ajax() or plain XMLHttpRequest or whatever you want. **As long as you return a Promise it will work!**.
 
