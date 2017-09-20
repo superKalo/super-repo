@@ -1,12 +1,14 @@
 class LocalStorageAdapter {
     get(_storageName) {
-        return new Promise( _resolve => {
-            _resolve(JSON.parse(window.localStorage.getItem(_storageName)));
-        });
+        return new Promise(_resolve => _resolve(
+            JSON.parse(window.localStorage.getItem(_storageName))
+        ));
     }
 
     set(_storageName, _data) {
-        window.localStorage.setItem(_storageName, JSON.stringify(_data));
+        return new Promise(_resolve => _resolve(
+            window.localStorage.setItem(_storageName, JSON.stringify(_data))
+        ));
     }
 }
 
