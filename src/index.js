@@ -44,6 +44,10 @@ class Repository {
             return false;
         }
 
+        if (_localStore.isInvalid) {
+            return false;
+        }
+
         const { lastFetched } = _localStore;
 
         const isLimitExceeded =
@@ -55,8 +59,21 @@ class Repository {
     _storeData(_data) {
         this.storage.set(this.config.name, {
             lastFetched: new Date().valueOf(),
+            isInvalid: false,
             data: _data
         });
+    }
+
+    invalidateData() {
+        return this.storage.get(this.config.name).then(_data =>
+            this.storage.set(this.config.name, Object.assign({}, _data, {
+                isInvalid: true
+            }))
+        );
+    }
+
+    clearData() {
+        return this.storage.set(this.config.name, null);
     }
 
     /**
