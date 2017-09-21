@@ -64,7 +64,7 @@ Now let's define a function responsible for getting data from the server. It doe
 
 - ... or plain XMLHttpRequest or whatever you want. **As long as you return a Promise it will work!**
 
-We're ready to define our **`SuperRepo`**sitory:
+We're ready to define our `SuperRepo`sitory:
 
 ```javascript
 /**
