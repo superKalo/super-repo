@@ -1,6 +1,6 @@
 {
   "name": "super-repo",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Repository-ish pattern for your data, that implements best practices for working with and storing data on the client-side.",
   "main": "src/index.js",
   "scripts": {
