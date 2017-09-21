@@ -60,8 +60,6 @@ class SuperRepo {
 
     constructor(_config) {
         this.config = _config;
-        this.syncInterval = null;
-        this.data = null;
 
         /**
          * Helper variables to hold the currently pending Promise (this.promise)
@@ -73,23 +71,45 @@ class SuperRepo {
         this.isPromisePending = false;
 
         switch(this.config.storage) {
-            case 'LOCAL_VARIABLE':
+            case 'LOCAL_VARIABLE': {
+                // Introduce this local variable to hold the repository data
+                this.data = null;
+
                 this.storage = new LocalVariableAdapter(this);
                 break;
-            case 'BROWSER_STORAGE':
+            }
+            case 'BROWSER_STORAGE': {
                 this.storage = new BrowserStorageAdapter();
                 break;
+            }
             case 'LOCAL_STORAGE':
-            default:
+            default: {
                 this.storage = new LocalStorageAdapter();
                 break;
+            }
         }
     }
 
+    /**
+     * Applies the data model to the rough response data, or with other words:
+     * sets custom attribute names for each response item.
+     *
+     * @param  {Object} or {Array} _response - server response
+     * @return {Object} or {Array}
+     */
     _normalizeData(_response) {
         const { dataModel } = this.config;
 
-        if (Array.isArray(dataModel)) {
+        const isMissing =
+            typeof dataModel === 'undefined' || dataModel === null;
+
+        if (isMissing) {
+            return _response;
+        }
+
+        const isArray = Array.isArray(dataModel);
+
+        if (isArray) {
             return _response.map( item => {
                 const obj = {};
 
@@ -99,20 +119,24 @@ class SuperRepo {
 
                 return obj;
             });
-        } else {
-            const obj = {};
-
-            Object.keys(dataModel).forEach(
-                key => obj[key] = _response[dataModel[key]]
-            );
-
-            return obj;
         }
+
+        // In all other cases - it should be an Array of Objects.
+        const obj = {};
+
+        Object.keys(dataModel).forEach(
+            key => obj[key] = _response[dataModel[key]]
+        );
+
+        return obj;
     }
 
     /**
-     * After the data model is applied,
+     * After the data model is applied via ._normalizeData(),
      * mapping the response gives an option for further processing the data.
+     *
+     * @param  {Object} or {Array} _response - server response
+     * @return {Object} or {Array}
      */
     _mapData(_response) {
         const { mapData } = this.config;
@@ -147,6 +171,12 @@ class SuperRepo {
         return ! isLimitExceeded;
     }
 
+    /**
+     * Stores data via the storage method configured.
+     *
+     * @param  {Array} or {Object} _data - the repository data
+     * @return {Void}
+     */
     _storeData(_data) {
         this.storage.set(this.config.name, {
             lastFetched: new Date().valueOf(),
@@ -155,6 +185,14 @@ class SuperRepo {
         });
     }
 
+    /**
+     * Invalidates data by setting turning on the `isInvalid` flag.
+     * It doesn't delete the data from the storage.
+     * However, the very next time when the .getData() method is invoked,
+     * it will directly call the server to get fresh data.
+     *
+     * @return {Promise}
+     */
     invalidateData() {
         return this.storage.get(this.config.name).then(_data =>
             this.storage.set(this.config.name, Object.assign({}, _data, {
@@ -163,41 +201,57 @@ class SuperRepo {
         );
     }
 
+    /**
+     * Deletes the data from the storage.
+     * Therefore, the very next time when the .getData() method is invoked,
+     * it will directly call the server to get fresh data.
+     *
+     * @return {Promise}
+     */
     clearData() {
         return this.storage.set(this.config.name, null);
     }
 
     /**
-     * Access the repository data.
+     * Gets data from the server (if it’s missing or outdated on our side)
+     * or otherwise - gets it from the cache.
      *
      * @return {Promise}
      */
     getData(){
+        const { config } = this;
+
         // If there is a Promise pending, wait for it, do not fire another one!
         if (this.isPromisePending) {
             return this.promise;
         }
 
+        /**
+         * The only way to detect if a Promise is pending or not,
+         * is to attach a flag like so. It doesn't look sexy, but it works.
+         * {@link: https://stackoverflow.com/a/36294256/1333836}
+         */
         this.isPromisePending = true;
-        const localData = this.storage.get(this.config.name);
 
         return this.promise = new Promise(_resolve => {
-            localData.then(_localData => {
+
+            this.storage.get(config.name).then(_localData => {
                 if (this._isDataUpToDate(_localData)) {
                     _resolve(_localData.data);
                 } else {
-                    this.config.request()
+                    config.request()
                         .then(this._normalizeData.bind(this))
                         .then(this._mapData.bind(this))
-                        .then(response => {
-                            this._storeData(response);
+                        .then(_response => {
+                            this._storeData(_response);
                             this.isPromisePending = false;
 
-                            return response;
+                            return _response;
                         })
                         .then(_resolve);
                 }
             });
+
         });
     }
 
