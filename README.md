@@ -1,8 +1,8 @@
-# SuperRepo - Repository-ish Pattern For Your Data
+# SuperRepo
 
-An abstraction, that implements best practices for working with and storing data on the client-side.
+Repository-ish pattern for your data, that implements **best practices** for working with and storing data on the client-side.
 
-Please read [my article my CSS-Trick post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd). Simply said, the idea of this library is to be your **Repository pattern abstraction** and therefore - to make the way you work with and store remote data more maintainable & scalable :dark_sunglasses: 
+Please read [my article my CSS-Trick post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd). TLDR: The idea of this library is to make the way you work with and store remote data more maintainable & scalable :dark_sunglasses: 
 
 ## Install
 
@@ -31,39 +31,59 @@ This package can be installed with:
 - Using CommonJS Imports
     ```javascript
     // If a module loader is configured (like RequireJS, Browserify or Neuter):
-    const SuperRepo = require('my-npm-module');
+    const SuperRepo = require('super-repo');
     ```
 
 ## Usage
 
-First, define a method that fetches the data. To get your data, use FetchAPI or jQuery's $.ajax() or plain XMLHttpRequest or whatever you want. **As long as you return a Promise it will work!**
-
-```javascript
-const requestWeatherData = () => fetch('weather.json').then(r => r.json());
-```
-
-Let's assume we have a weather API. It returns us the temperature, feels-like, wind speed (m/s), pressure (hPa) and humidity (%). A common pattern, in order for the JSON response to be as slim as possible, attributes are compressed up to the first letter. So here’s what we receive from the server:
+Let's assume we have a weather API. It returns the temperature, feels-like, wind speed (m/s), pressure (hPa) and humidity (%). A common pattern, in order for the JSON response to be as slim as possible, attributes are compressed up to the first letter. So here’s what we receive from the server:
 
 ```json
 {
     "t": 31,
     "w": 32,
     "p": 1011,
-    "h": "38",
-    "f": "32"
+    "h": 38,
+    "f": 32
 }
 ```
 
-Then, we're ready to define our Repository.
+Now let's define a function responsible for getting data from the server. It doesn't matter how, as long as your function returns a Promise.
 
-Define where your want to store the data **`[1]`** - in this example, in the LocalStorage. Then - the name of your data repository **`[2]`** - it's used for the LocalStorage key. Finally, define when the data will get out of date **`[3]`**. If the data will never get out of date, you can set `cacheLimit` to `-1`.
+- You can use jQuery's `$.ajax()` (as of v1.5, jQuery implements the Promise interface):
+
+    ```javascript
+    const requestWeatherData = () => $.ajax({url:'weather.json'});
+    ```
+
+- ... or FetchAPI:
+
+    ```javascript
+    const requestWeatherData = () => fetch('weather.json').then(r => r.json());
+    ```
+
+- ... or plain XMLHttpRequest or whatever you want. **As long as you return a Promise it will work!**
+
+We're ready to define our **`SuperRepo`**sitory:
 
 ```javascript
+/**
+ * 1. Define where you want to store the data,
+ *    in this example, in the LocalStorage.
+ *
+ * 2. Then - define a name of your data repository,
+ *    it's used for the LocalStorage key.
+ *
+ * 3. Define when the data will get out of date.
+ *
+ * 4. Define your data model
+ *    and set custom attribute names for each response items. Remember why? See below.
+ */
 const WeatherRepository = new SuperRepo({
     storage: 'LOCAL_STORAGE',                   // [1]
     name: 'weather',                            // [2]
-    cacheLimit: 5 * 1000, // 5 seconds          // [3]
-    request: requestWeatherData, // Promise!
+    cacheLimit: 5 * 60 * 1000, // 5 minutes     // [3]
+    request: () => API.get('weather'),          // Function that returns a Promise
     dataModel: {                                // [4]
         temperature: 't',
         windspeed: 'w',
@@ -72,10 +92,30 @@ const WeatherRepository = new SuperRepo({
 });
 ```
 
-Then **`[4]`**, define your data model and set custom attribute names for each response items. Why this is a good idea:
-- Throughout our codebase via WeatherRepository.getData() we access meaningful and semantic attributes like `.temperature` and `.windspeed` instead of `t` and `s`.
-- We expose only parameters we need and we simply don't include (hide) all others.
-- If the response attributes names change (or we need to wire-up another API with different response structure), we only need to tweak it here - in only 1 place of our codebase.
+Why **`[4]`** this is a good idea:
+
+- Throughout your codebase via `WeatherRepository.getData()` you access meaningful and semantic attributes like `.temperature` and `.windspeed` instead of `t` and `s`.
+- You expose only parameters you need and simply don't include the others.
+- If the response attributes names change (or you need to wire-up another API with different response structure), you only need to tweak it here - in only 1 place of your codebase.
+
+From here on, you can use the `.getData()` method to access your data. This method will first check if out data outdated (based on the `cacheLimit`). If our data is up to date - it will get it from the Local Storage. Otherwise - it will do a server request to get fresh data.
+
+    ```javascript
+    WeatherRepository.getData().then( data => {
+        // Do something awesome.
+        console.log(`It is ${data.temperature} degrees`);
+    });
+    ```
+
+The library does the following cool things:
+
+- [Performance] Gets data from the server (if it’s missing or outdated on our side) or otherwise - gets it from the cache.
+- [Performance] If `WeatherRepository.getData()` is called multiple times from different parts of our app, only 1 server request is triggered.
+- [Scalability] Applies the data model to our rough data (see **`[4]`** above).
+- [Scalability] You can store the data in the Local Storage or in the Browser (local) Storage (if you’re building a browser extension) or in a local variable (if won’t want to store data across browser sessions). See the options for the `storage` setting.
+- [Scalability] You can initiate an automatic data sync with `WeatherRepository.initSyncer()`. This will initiate a setInterval, which will countdown to the point when the data is out of date (based on the `cacheLimit` value) and will trigger a server request to get fresh data. Sweet.
+
+... and a few more. Read the documentation for advanced usage.
 
 ## Dependencies
 
