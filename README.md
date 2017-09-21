@@ -1,10 +1,10 @@
 # <img src="https://user-images.githubusercontent.com/2548061/30693332-c07f5844-9ed7-11e7-970d-17498f7c8e62.png" height="24" alt="Super R" /> SuperRepo
 
-Repository-ish pattern for your data, that implements **best practices** for working with and storing data on the client-side. Please read [my article my CSS-Trick post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd).
+Repository-ish pattern for your data, that implements **best practices** for working with and storing data on the client-side. **Please read [my CSS-Tricks post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd).**
 
 > TL;DR: Get ready to make the way you work with and store remote data more maintainable & scalable! :dark_sunglasses: 
 
-## Install
+## :package: Install
 
 This package can be installed with:
 
@@ -13,28 +13,28 @@ This package can be installed with:
 - Or simply download the [latest release](https://github.com/superKalo/repository/releases).
 
 
-## Load
+## :rocket: Load
 
-- Static HTML
+- Static HTML:
 
     ```html
     <script src="/node_modules/super-repo/src/index.js"></script>
     ```
 
-- Using ES6 Imports
+- Using ES6 Imports:
 
     ```javascript
     // If a transpiler is configured (like Traceur Compiler, Babel, Rollup or Webpack):
     import SuperRepo from 'super-repo';
     ```
 
-- Using CommonJS Imports
+- Using CommonJS Imports:
     ```javascript
     // If a module loader is configured (like RequireJS, Browserify or Neuter):
     const SuperRepo = require('super-repo');
     ```
 
-## Usage
+## :bulb: Usage
 
 Let's assume we have a weather API. It returns the temperature, feels-like, wind speed (m/s), pressure (hPa) and humidity (%). A common pattern, in order for the JSON response to be as slim as possible, attributes are compressed up to the first letter. So here’s what we receive from the server:
 
@@ -107,7 +107,7 @@ Why **`[4]`** this is a good idea (best practice):
 - You expose only parameters you need and simply don't include the others.
 - If the response attributes names change (or you need to wire-up another API with different response structure), you only need to tweak it here - in only 1 place of your codebase.
 
-## Features
+## :dark_sunglasses: Features
 
 The library does the following cool things:
 
@@ -119,11 +119,11 @@ The library does the following cool things:
 
 ... and a few more. Read the documentation for advanced usage.
 
-## Dependencies
+## :scream: Dependencies
 
 None.
 
-## Documentation
+## :open_book: Documentation
 
 ### Options
 - **`storage`** [required] | default: `'LOCAL_STORAGE'` | all: `'LOCAL_STORAGE'`, `'BROWSER_STORAGE'` or `'LOCAL_VARIABLE'`
@@ -221,9 +221,9 @@ None.
     Destroys the setInterval, initiated by the `.initSyncer()` method.
 
 
-## Contributing
+## :+1: Contributing
 I'm open to ideas and suggestions! If you want to contribute or simply you've cought a bug - you can either open an issue or clone the repository, tweak the `src/index.js` file and fire a Pull Request. There are no *fancy* build steps.
 
 
-## License
+## :oncoming_police_car: License
 The code and the documentation are released under the [MIT License](https://github.com/superKalo/repository/blob/master/LICENSE).
