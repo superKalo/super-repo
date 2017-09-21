@@ -20,6 +20,9 @@
 <!-- Link to the SuperRepo library -->
 <script src="../src/index.js"></script>
 
+<!-- Uncomment for the jQuery $.ajax() example -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+
 <script>
 
     /**
@@ -29,6 +32,7 @@
     const requestWeatherData = () => fetch('weather.json').then(r => r.json());
 
     // ... or you can use jQuery's $.ajax() (as of v1.5, jQuery implements the Promise interface):
+    // In order for this to work, uncomment also the jQuery script tag above!
     // const requestWeatherData = () => $.ajax({url:'weather.json'});
 
     const WeatherRepository = new SuperRepo({
