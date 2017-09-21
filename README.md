@@ -127,12 +127,12 @@ None.
 
 ### Options
 
-#### [required] `name`
+#### `name` [required]
 Type: `String`
 
 Name of the Repository. It's used for Local Storage or Browser Local Storage item name.
 
-#### [required] `request`
+#### `request` [required]
 Type: `Promise`, that resolves to `Array` or `Object`
 
 The request that does the actual API call. It must be a Promise. Use FetchAPI or jQuery's $.ajax() or plain XMLHttpRequest or whatever you want, but wrap it in a Promise (if it isn't).
@@ -161,7 +161,7 @@ The request that does the actual API call. It must be a Promise. Use FetchAPI or
 
 - ... or plain XMLHttpRequest or whatever you want. **As long as you return a Promise it will work!**
 
-#### [optional] `storage`
+#### `storage` [optional]
 Default: `'LOCAL_STORAGE'` | All options: `'LOCAL_STORAGE'`, `'BROWSER_STORAGE'` or `'LOCAL_VARIABLE'`
 
 The preferred client-side storage.
@@ -170,7 +170,7 @@ The preferred client-side storage.
 - `'BROWSER_STORAGE'`: Stores data in the [Browser (local) Storage](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/), if you're building a browser extension.
 - `'LOCAL_VARIABLE'`: Stores the data in a local `.data` variable, attached to the class instance, if you don’t want to store data across browser sessions.
 
-#### [optional, but recommended] `dataModel`
+#### `dataModel` [optional, but recommended]
 Type: `Object` or `Array`
 
 The mapping of the attribute names you'd like to use across your codebase with the attribute names coming from the server response.
@@ -201,12 +201,12 @@ The mapping of the attribute names you'd like to use across your codebase with t
     });
     ```
 
-#### [optional] `outOfDateAfter`
+#### `outOfDateAfter` [optional]
 Default: `-1` | Type: `Number`, in milliseconds
 
 Defines when the data will get out of date. In milliseconds. If the data will never get out of date, you can set `outOfDateAfter` to `-1`.
 
-#### [optional] `mapData`
+#### `mapData` [optional]
 Type: `Function`
 
 After the `dataModel` is applied, if you need any further manipulation data manipulation, you can hook on this method. For example, let's say the server sends the temperature in Celsius and you want to convert it to Fahrenheit:
