@@ -11,7 +11,9 @@
     "url": "git+https://github.com/superKalo/super-repo.git"
   },
   "keywords": [
-    "repository"
+    "javascript",
+    "javascript-library",
+    "localstorage"
   ],
   "author": "Kaloyan Kosev",
   "license": "MIT",

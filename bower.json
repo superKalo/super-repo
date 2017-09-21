@@ -7,7 +7,9 @@
   ],
   "license": "MIT",
   "keywords": [
-    "javascript"
+    "javascript",
+    "javascript-library",
+    "localstorage"
   ],
   "homepage": "https://github.com/superKalo/super-repo",
   "ignore": [
