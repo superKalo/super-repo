@@ -237,6 +237,9 @@ class SuperRepo {
 
             this.storage.get(config.name).then(_localData => {
                 if (this._isDataUpToDate(_localData)) {
+                    this.promise = null;
+                    this.isPromisePending = false;
+
                     _resolve(_localData.data);
                 } else {
                     config.request()
@@ -244,6 +247,8 @@ class SuperRepo {
                         .then(this._mapData.bind(this))
                         .then(_response => {
                             this._storeData(_response);
+
+                            this.promise = null;
                             this.isPromisePending = false;
 
                             return _response;
