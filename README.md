@@ -98,12 +98,14 @@ Why **`[4]`** this is a good idea:
 
 From here on, you can use the `.getData()` method to access your data. This method will first check if out data outdated (based on the `cacheLimit`). If our data is up to date - it will get it from the Local Storage. Otherwise - it will do a server request to get fresh data.
 
-    ```javascript
-    WeatherRepository.getData().then( data => {
-        // Do something awesome.
-        console.log(`It is ${data.temperature} degrees`);
-    });
-    ```
+```javascript
+WeatherRepository.getData().then( data => {
+    // Do something awesome.
+    console.log(`It is ${data.temperature} degrees`);
+});
+```
+
+## Features
 
 The library does the following cool things:
 
