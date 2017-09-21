@@ -118,6 +118,10 @@ class SuperRepo {
     constructor(_config) {
         this.config = _config;
 
+        /** Set default values */
+        const { outOfDateAfter } = _config
+        this.config.outOfDateAfter = outOfDateAfter ? outOfDateAfter : -1;
+
         /**
          * Helper variables to hold the currently pending Promise (this.promise)
          * and to determine if a Promise is currently pending or not.
