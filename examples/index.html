@@ -32,20 +32,30 @@
     // const requestWeatherData = () => $.ajax({url:'weather.json'});
 
     const WeatherRepository = new SuperRepo({
+        storage: 'LOCAL_STORAGE', // 'LOCAL_STORAGE', 'BROWSER_STORAGE' or 'LOCAL_VARIABLE'
         name: 'weather',
         request: requestWeatherData,
-        dataModel: {
+        dataModel: { // Optional, but recommended.
             temperature: 't',
             windspeed: 'w',
             pressure: 'p'
         },
-        outOfDateAfter: 5 * 1000 // 5 seconds
+        mapData: data => { // Optional
+            // Convert to Fahrenheit
+            const temperature = (data.temperature * 1.8) + 32;
+
+            // These two sways the same
+            const { windspeed, pressure } = data;
+
+            return { temperature, windspeed, pressure };
+        },
+        outOfDateAfter: -1 // 5 seconds
     });
 
 
     document.getElementById('get').addEventListener("click", () => {
         WeatherRepository.getData().then(
-            r => console.log(`It is ${r.temperature} degrees.`)
+            r => console.log(`It is ${r.temperature} degrees Fahrenheit.`)
         );
     });
 
