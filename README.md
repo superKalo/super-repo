@@ -133,7 +133,7 @@ Type: `String`
 Name of the Repository. It's used for Local Storage or Browser Local Storage item name.
 
 #### `request` [required]
-Type: `Function` that returns a `Promise` (that resolves to `Array` or `Object`) :nerd_face: 
+Type: `Function` that returns a `Promise`, that resolves to `Array` or `Object`, based on your server response :nerd_face: 
 
 The request that does the actual API call. It must be a Promise. Use FetchAPI or jQuery's $.ajax() or plain XMLHttpRequest or whatever you want, but wrap it in a Promise (if it isn't).
     
@@ -233,32 +233,80 @@ const WeatherRepository = new SuperRepo({
 
 ### Methods
 
-- **`.getData()`** | Returns: `Promise`
+#### `.getData()`
+Returns: `Promise`, that resolves to `Array` or `Object`, based on your server response :nerd_face: 
 
-    This is how you can access data. It triggers a server request if data is missing or invalidated or out of date. It returns the data from the cache (local storage, browser local storage or local variable) if the data is up to date.
+This is how you can access data. It triggers a server request if data is missing or invalidated or out of date. It returns the data from the cache (local storage, browser local storage or local variable) if the data is up to date.
 
-    ```javascript
-    WeatherRepository.getData().then( data => {
-        // Do something.
-        console.log(`It is ${data.temperature} degrees`);
-    });
-    ```
+```javascript
+const WeatherRepository = new SuperRepo({ /* ... */ });
 
-- **`.invalidateData()`** | Returns: `Promise`
+WeatherRepository.getData().then( data => {
+    // Do something.
+    console.log(`It is ${data.temperature} degrees`);
+});
+```
 
-    Invalidates data by setting a flag. It **doesn't delete the data from the storage**. However, the very next time when the `.getData()` method is invoked, it will directly call the server to get fresh data.
+#### `.invalidateData()`
+Returns: `Promise`,  that resolves to {Object} that has `prevData` {Object} and the `nextData` {Object}
 
-- **`.clearData()`**  | Returns: `Promise`
+Invalidates data by setting a flag. It **doesn't delete the data from the storage**. However, the very next time when the `.getData()` method is invoked, it will directly call the server to get fresh data.
 
-    Deletes the data from the storage. Therefore, the very next time when the `.getData()` method is invoked, it will directly call the server to get fresh data.
+```javascript
+const WeatherRepository = new SuperRepo({ /* ... */ });
 
-- **`.initSyncer()`** | Returns: `void`
+WeatherRepository.invalidateData().then( _response => {
+    console.log('Previous data', _response.prevData);
+    console.log('Next data', _response.nextData);
+});
+```
 
-    Initiates a setInterval, which will countdown to the point when the data is out of date (based on the `outOfDateAfter` value) and will trigger a server request to get fresh data.
+#### `.clearData()`
+Returns: `Promise`, that resolves to `prevData` {Object} - the previous (just deleted) data
 
-- **`.destroySyncer()`**  | Returns: `void`
+Deletes the data from the storage. Therefore, the very next time when the `.getData()` method is invoked, it will directly call the server to get fresh data.
 
-    Destroys the setInterval, initiated by the `.initSyncer()` method.
+```javascript
+const WeatherRepository = new SuperRepo({ /* ... */ });
+
+WeatherRepository.clearData().then( _prevData => {
+    console.log('Previous (just deleted data) data', _prevData);
+});
+```
+
+#### `.initSyncer()` | Returns: `Void`
+
+Initiates a setInterval, which will countdown to the point when the data is out of date (based on the `outOfDateAfter` value) and will trigger a server request to get fresh data.
+
+You might want to set the `outOfDateAfter` value, since otherwise, it will trigger a sync on every 1 second (otherwise, this might be a big network (performance) overhead).
+    
+```javascript
+const WeatherRepository = new SuperRepo({
+    outOfDateAfter: 5 * 60 * 1000 // 5 min
+    /* ... */
+});
+
+WeatherRepository.initSyncer();
+```
+
+#### `.destroySyncer()`
+Returns: `Void`
+
+Destroys the setInterval, initiated by the `.initSyncer()` method.
+
+```javascript
+const WeatherRepository = new SuperRepo({
+    outOfDateAfter: 5 * 60 * 1000 // 5 min
+    /* ... */
+});
+
+WeatherRepository.initSyncer();
+
+// La la la la la
+
+// Do not sync anymore.
+WeatherRepository.destroySyncer();
+```
 
 
 ## :+1: Contributing
