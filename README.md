@@ -80,7 +80,7 @@ We're ready to define our `SuperRepo`sitory:
 const WeatherRepository = new SuperRepo({
     storage: 'LOCAL_STORAGE',                   // [1]
     name: 'weather',                            // [2]
-    cacheLimit: 5 * 60 * 1000, // 5 minutes     // [3]
+    outOfDateAfter: 5 * 60 * 1000, // 5 min     // [3]
     request: requestWeatherData,                // Function that returns a Promise
     dataModel: {                                // [4]
         temperature: 't',
@@ -91,7 +91,7 @@ const WeatherRepository = new SuperRepo({
 
 /**
  * From here on, you can use the `.getData()` method to access your data.
- * It will first check if out data outdated (based on the `cacheLimit`).
+ * It will first check if out data outdated (based on the `outOfDateAfter`).
  * If so - it will do a server request to get fresh data,
  * otherwise - it will get it from the cache (Local Storage).
  */
@@ -115,7 +115,7 @@ The library does the following cool things:
 - [Performance] If `WeatherRepository.getData()` is called multiple times from different parts of our app, only 1 server request is triggered.
 - [Scalability] Applies the data model to our rough data (see **`[4]`** above).
 - [Scalability] You can store the data in the Local Storage or in the Browser (local) Storage (if you’re building a browser extension) or in a local variable (if won’t want to store data across browser sessions). See the options for the `storage` setting.
-- [Scalability] You can initiate an automatic data sync with `WeatherRepository.initSyncer()`. This will initiate a setInterval, which will countdown to the point when the data is out of date (based on the `cacheLimit` value) and will trigger a server request to get fresh data. Sweet.
+- [Scalability] You can initiate an automatic data sync with `WeatherRepository.initSyncer()`. This will initiate a setInterval, which will countdown to the point when the data is out of date (based on the `outOfDateAfter` value) and will trigger a server request to get fresh data. Sweet.
 
 ... and a few more. Read the documentation for advanced usage.
 
@@ -166,9 +166,9 @@ None.
     }]
     ```
 
-- **`cacheLimit`** [optional] | default: `-1` | type: `Number`
+- **`outOfDateAfter`** [optional] | default: `-1` | type: `Number`
 
-    Defines when the data will get out of date. In milliseconds. If the data will never get out of date, you can set `cacheLimit` to `-1`.
+    Defines when the data will get out of date. In milliseconds. If the data will never get out of date, you can set `outOfDateAfter` to `-1`.
 
 - **`mapData`** [optional] | type: `Function`
 
@@ -214,7 +214,7 @@ None.
 
 - **`.initSyncer()`** | Returns: `void`
 
-    Initiates a setInterval, which will countdown to the point when the data is out of date (based on the `cacheLimit` value) and will trigger a server request to get fresh data.
+    Initiates a setInterval, which will countdown to the point when the data is out of date (based on the `outOfDateAfter` value) and will trigger a server request to get fresh data.
 
 - **`.destroySyncer()`**  | Returns: `void`
 
