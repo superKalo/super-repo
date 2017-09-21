@@ -324,8 +324,12 @@ class SuperRepo {
      * @return {Void}
      */
     _initSyncInterval(_interval) {
-        this.syncInterval = setInterval(
-            () => this.getData(), _interval
+        // Do not initiate intervals which are quicker then a second,
+        // otherwise, this might be a big network (performance) overhead.
+        const interval = _interval < 1000 ? 1000: _interval;
+
+        return setInterval(
+            () => this.getData(), interval
         );
     }
 
@@ -363,7 +367,7 @@ class SuperRepo {
      * @return {Void}
      */
     destroySyncer() {
-        this.syncInterval = null;
+        clearInterval(this.syncInterval);
     }
 };
 
