@@ -260,12 +260,25 @@ class SuperRepo {
         });
     }
 
+    /**
+     * Helper method that initiates an interval.
+     *
+     * @param  {Number} _interval - the interval, in milliseconds
+     * @return {Void}
+     */
     _initSyncInterval(_interval) {
         this.syncInterval = setInterval(
             () => this.getData(), _interval
         );
     }
 
+    /**
+     * Initiates a setInterval, which will countdown to the point
+     * when the data is out of date (based on the `cacheLimit` value)
+     * and will trigger a server request to get fresh data.
+     *
+     * @return {Void}
+     */
     initSyncer() {
         this.storage.get(this.config.name).then(_localData => {
             if (this._isDataUpToDate(_localData)) {
@@ -287,6 +300,11 @@ class SuperRepo {
         });
     }
 
+    /**
+     * Destroys the setInterval, initiated by the .initSyncer() method.
+     *
+     * @return {Void}
+     */
     destroySyncer() {
         this.syncInterval = null;
     }
