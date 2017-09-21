@@ -9,6 +9,7 @@ Repository-ish pattern for your data, that implements **best practices** for wor
 This package can be installed with:
 
 - [npm](https://www.npmjs.com/package/super-repo): `npm install --save super-repo`
+- [bower](https://bower.io/search/?q=super-repo): `bower install --save super-repo`
 
 - Or simply download the [latest release](https://github.com/superKalo/repository/releases).
 
