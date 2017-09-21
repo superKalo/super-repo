@@ -1,10 +1,26 @@
+/**
+ * Adapter that stores the data in the Local Storage.
+ */
 class LocalStorageAdapter {
+    /**
+     * Get the cached data.
+     *
+     * @param  {String} _storageName - the `name` setting from the config
+     * @return {Promise}
+     */
     get(_storageName) {
         return new Promise(_resolve => _resolve(
             JSON.parse(window.localStorage.getItem(_storageName))
         ));
     }
 
+    /**
+     * Set cached data.
+     *
+     * @param {[type]} _storageName - the `name` setting from the config
+     * @param {Object} or {Array} _data
+     * @return {Promise}
+     */
     set(_storageName, _data) {
         return new Promise(_resolve => _resolve(
             window.localStorage.setItem(_storageName, JSON.stringify(_data))
@@ -12,6 +28,10 @@ class LocalStorageAdapter {
     }
 }
 
+/**
+ * Adapter that stores the data in the Browser Storage (local).
+ * If you're building a browser extension, that's the way to store data.
+ */
 class BrowserStorageAdapter {
     constructor() {
         /**
@@ -24,6 +44,12 @@ class BrowserStorageAdapter {
         this.browser = window.msBrowser || window.browser || window.chrome;
     }
 
+    /**
+     * Get the cached data.
+     *
+     * @param  {String} _storageName - the `name` setting from the config
+     * @return {Promise}
+     */
     get(_storageName) {
         return new Promise(_resolve =>
             this.browser.storage.local.get(_storageName, _response =>
@@ -32,6 +58,13 @@ class BrowserStorageAdapter {
         );
     }
 
+    /**
+     * Set cached data.
+     *
+     * @param {[type]} _storageName - the `name` setting from the config
+     * @param {Object} or {Array} _data
+     * @return {Promise}
+     */
     set(_storageName, _data) {
         return new Promise(_resolve =>
             this.browser.storage.local.set({
@@ -41,15 +74,39 @@ class BrowserStorageAdapter {
     }
 }
 
+/**
+ * Adapter that stores the data in a local `.data` variable,
+ * attached to the class instance.
+ * Convenient if you don’t want to store data across browser sessions.
+ */
 class LocalVariableAdapter {
+    /**
+     * Sets a reference to the context, so we can access the instance's `.data`
+     * @param  {Object} _this - the `this` context of the class instance.
+     */
     constructor(_this) {
         this.context = _this;
     }
 
+    /**
+     * Get the cached data.
+     *
+     * @param {String} _storageName - the `name` setting from the config,
+     *                                which we don't need for this adapter.
+     * @return {Promise}
+     */
     get(_storageName) {
         return new Promise(_resolve => _resolve(this.context.data));
     }
 
+    /**
+     * Set cached data.
+     *
+     * @param {String} _storageName - the `name` setting from the config,
+     *                                which we don't need for this adapter.
+     * @param {Object} or {Array} _data
+     * @return {Promise}
+     */
     set(_storageName, _data) {
         return new Promise(_resolve => _resolve(this.context.data = _data));
     }
