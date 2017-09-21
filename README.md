@@ -68,22 +68,20 @@ We're ready to define our **`SuperRepo`**sitory:
 
 ```javascript
 /**
- * 1. Define where you want to store the data,
- *    in this example, in the LocalStorage.
+ * 1. Define where you want to store the data, in this example, in the LocalStorage.
  *
- * 2. Then - define a name of your data repository,
- *    it's used for the LocalStorage key.
+ * 2. Then - define a name of your data repository, it's used for the LocalStorage key.
  *
  * 3. Define when the data will get out of date.
  *
- * 4. Define your data model
- *    and set custom attribute names for each response items. Remember why? See below.
+ * 4. Define your data model and set custom attribute names for each response items.
+      Remember why? See below.
  */
 const WeatherRepository = new SuperRepo({
     storage: 'LOCAL_STORAGE',                   // [1]
     name: 'weather',                            // [2]
     cacheLimit: 5 * 60 * 1000, // 5 minutes     // [3]
-    request: () => API.get('weather'),          // Function that returns a Promise
+    request: requestWeatherData,                // Function that returns a Promise
     dataModel: {                                // [4]
         temperature: 't',
         windspeed: 'w',
