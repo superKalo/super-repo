@@ -1,4 +1,4 @@
-# SuperRepo
+# ![Super R](https://user-images.githubusercontent.com/2548061/30693332-c07f5844-9ed7-11e7-970d-17498f7c8e62.png) SuperRepo
 
 Repository-ish pattern for your data, that implements **best practices** for working with and storing data on the client-side. Please read [my article my CSS-Trick post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd).
 
