@@ -252,14 +252,26 @@ class SuperRepo {
      * However, the very next time when the .getData() method is invoked,
      * it will directly call the server to get fresh data.
      *
-     * @return {Promise}
+     * @return {Promise}, that resolves to {Object} that has:
+     *   - prevData {Object} - the previous data
+     *   - nextData {Object} - the next data
      */
     invalidateData() {
-        return this.storage.get(this.config.name).then(_data =>
-            this.storage.set(this.config.name, Object.assign({}, _data, {
-                isInvalid: true
-            }))
-        );
+        return new Promise(_resolve => {
+
+            this.storage.get(this.config.name).then(_prevData => {
+                const nextData = Object.assign({}, _prevData, {
+                    isInvalid: true
+                });
+
+                this.storage.set(this.config.name, nextData)
+                    .then( () => _resolve({
+                        prevData: _prevData,
+                        nextData: nextData
+                    }));
+            });
+
+        });
     }
 
     /**
