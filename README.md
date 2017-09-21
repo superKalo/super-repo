@@ -53,7 +53,7 @@ Now let's define a function responsible for getting data from the server. It doe
 - You can use jQuery's `$.ajax()` (as of v1.5, jQuery implements the Promise interface):
 
     ```javascript
-    const requestWeatherData = () => $.ajax({url:'weather.json'});
+    const requestWeatherData = () => $.ajax( {url:'weather.json'} );
     ```
 
 - ... or FetchAPI:
@@ -133,14 +133,14 @@ Type: `String`
 Name of the Repository. It's used for Local Storage or Browser Local Storage item name.
 
 #### `request` [required]
-Type: `Promise`, that resolves to `Array` or `Object`
+Type: `Function` that returns a `Promise` (that resolves to `Array` or `Object`) :nerd_face: 
 
 The request that does the actual API call. It must be a Promise. Use FetchAPI or jQuery's $.ajax() or plain XMLHttpRequest or whatever you want, but wrap it in a Promise (if it isn't).
     
 - You can use jQuery's `$.ajax()` (as of v1.5, jQuery implements the Promise interface):
 
     ```javascript
-    const requestWeatherData = () => $.ajax({url:'weather.json'});
+    const requestWeatherData = () => $.ajax( {url:'weather.json'} );
     
     const WeatherRepository = new SuperRepo({
         /* ... */
