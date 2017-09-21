@@ -2,7 +2,9 @@
 
 Repository-ish pattern for your data, that implements **best practices** for working with and storing data on the client-side.
 
-Please read [my article my CSS-Trick post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd). TLDR: The idea of this library is to make the way you work with and store remote data more maintainable & scalable :dark_sunglasses: 
+Please read [my article my CSS-Trick post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd).
+
+> TL;DR: The idea is to to make the way you work with and store remote data more maintainable & scalable :dark_sunglasses: 
 
 ## Install
 
