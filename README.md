@@ -131,7 +131,7 @@ None.
     The preferred client-side storage. The options are:
 
     - [Local Storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) (`'LOCAL_STORAGE'`)
-    - [Browser (local) Storage](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/) if you're building a browser extension (`'BROWSER_STORAGE'`)
+    - [Browser (local) Storage](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/) if you're building a browser extension (`'BROWSER_STORAGE'`).
     - Storing the data in a local `.data` variable, attached to the class instance (`'LOCAL_VARIABLE'`)
 
 - **`name`** [required] | type: `String`
@@ -142,7 +142,7 @@ None.
 
     The request that does the actual API call. It must be a Promise. Use FetchAPI or jQuery's $.ajax() or plain XMLHttpRequest or whatever you want, but wrap it in a Promise (if it isn't).
 
-- **`dataModel`** [required] | type: `Object` or `Array`
+- **`dataModel`** [optional, but recommended] | type: `Object` or `Array`
 
     The mapping of the attribute names you'd like to use across your codebase with the attribute names coming from the server response.
 
