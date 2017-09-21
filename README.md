@@ -89,7 +89,8 @@ const WeatherRepository = new SuperRepo({
     }
 });
 
-/** From here on, you can use the `.getData()` method to access your data.
+/**
+ * From here on, you can use the `.getData()` method to access your data.
  * It will first check if out data outdated (based on the `cacheLimit`).
  * If so - it will do a server request to get fresh data,
  * otherwise - it will get it from the cache (Local Storage).
