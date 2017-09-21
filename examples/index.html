@@ -18,18 +18,21 @@
 
 <script>
 
+    const fetctme = () => fetch('weather.json').then(r => r.json());
+
+
     const WeatherRepository = new SuperRepo({
         name: 'weather',
-        request: () => fetch('weather.json').then(r => r.json()), // Promise!
+        request: fetctme, // Promise!
         dataModel: {
             temperature: 't',
             windspeed: 'w',
             pressure: 'p'
         },
-        cacheLimit: 5 * 1000 // 5 seconds
+        outOfDateAfter: 5 * 1000 // 5 seconds
     });
 
-    WeatherRepository.getData().then( r => console.log(r.temperature) );
+    // WeatherRepository.getData().then( r => console.log(r.temperature) );
 
 
     document.getElementById('invalidate').addEventListener("click", () => {

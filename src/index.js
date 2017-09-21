@@ -223,7 +223,7 @@ class SuperRepo {
         const { lastFetched } = _localStore;
 
         const isLimitExceeded =
-            (new Date().valueOf() - lastFetched) > this.config.cacheLimit;
+            (new Date().valueOf() - lastFetched) > this.config.outOfDateAfter;
 
         return ! isLimitExceeded;
     }
@@ -331,7 +331,7 @@ class SuperRepo {
 
     /**
      * Initiates a setInterval, which will countdown to the point
-     * when the data is out of date (based on the `cacheLimit` value)
+     * when the data is out of date (based on the `outOfDateAfter` value)
      * and will trigger a server request to get fresh data.
      *
      * @return {Void}
@@ -345,11 +345,11 @@ class SuperRepo {
                 this.syncInterval = this._initSyncInterval(diff);
 
                 setTimeout( () => {
-                    this.syncInterval = this._initSyncInterval(this.config.cacheLimit);
+                    this.syncInterval = this._initSyncInterval(this.config.outOfDateAfter);
                 }, diff);
             } else {
                 this.getData().then(r => {
-                    this.syncInterval = this._initSyncInterval(this.config.cacheLimit)
+                    this.syncInterval = this._initSyncInterval(this.config.outOfDateAfter)
 
                     return r;
                 });
