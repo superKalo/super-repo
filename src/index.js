@@ -279,10 +279,18 @@ class SuperRepo {
      * Therefore, the very next time when the .getData() method is invoked,
      * it will directly call the server to get fresh data.
      *
-     * @return {Promise}
+     * @return {Promise},  that resolves to
+     *   - prevData {Object} - the previous (just deleted) data
      */
     clearData() {
-        return this.storage.set(this.config.name, null);
+        return new Promise(_resolve => {
+
+            this.storage.get(this.config.name).then(_prevData => {
+                this.storage.set(this.config.name, null).
+                    then( () => _resolve(_prevData))
+            });
+
+        });
     }
 
     /**
