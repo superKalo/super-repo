@@ -88,22 +88,23 @@ const WeatherRepository = new SuperRepo({
         pressure: 'p'
     }
 });
-```
 
-Why **`[4]`** this is a good idea:
-
-- Throughout your codebase via `WeatherRepository.getData()` you access meaningful and semantic attributes like `.temperature` and `.windspeed` instead of `t` and `s`.
-- You expose only parameters you need and simply don't include the others.
-- If the response attributes names change (or you need to wire-up another API with different response structure), you only need to tweak it here - in only 1 place of your codebase.
-
-From here on, you can use the `.getData()` method to access your data. This method will first check if out data outdated (based on the `cacheLimit`). If our data is up to date - it will get it from the Local Storage. Otherwise - it will do a server request to get fresh data.
-
-```javascript
+/** From here on, you can use the `.getData()` method to access your data.
+ * It will first check if out data outdated (based on the `cacheLimit`).
+ * If so - it will do a server request to get fresh data,
+ * otherwise - it will get it from the cache (Local Storage).
+ */
 WeatherRepository.getData().then( data => {
     // Do something awesome.
     console.log(`It is ${data.temperature} degrees`);
 });
 ```
+
+Why **`[4]`** this is a good idea (best practice):
+
+- Throughout your codebase via `WeatherRepository.getData()` you access meaningful and semantic attributes like `.temperature` and `.windspeed` instead of `t` and `s`.
+- You expose only parameters you need and simply don't include the others.
+- If the response attributes names change (or you need to wire-up another API with different response structure), you only need to tweak it here - in only 1 place of your codebase.
 
 ## Features
 
