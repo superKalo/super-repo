@@ -114,7 +114,7 @@ The library does the following cool things:
 - [Performance] Gets data from the server (if it’s missing or outdated on our side) or otherwise - gets it from the cache.
 - [Performance] If `WeatherRepository.getData()` is called multiple times from different parts of our app, only 1 server request is triggered.
 - [Scalability] Applies the data model to our rough data (see **`[4]`** above).
-- [Scalability] You can store the data in the Local Storage or in the Browser (local) Storage (if you’re building a browser extension) or in a local variable (if won’t want to store data across browser sessions). See the options for the `storage` setting.
+- [Scalability] You can store the data in the Local Storage or in the Browser (local) Storage (if you’re building a browser extension) or in a local variable (if you don't want to store data across browser sessions). See the options for the `storage` setting.
 - [Scalability] You can initiate an automatic data sync with `WeatherRepository.initSyncer()`. This will initiate a setInterval, which will countdown to the point when the data is out of date (based on the `outOfDateAfter` value) and will trigger a server request to get fresh data. Sweet.
 
 ... and a few more. Read the documentation for advanced usage.
