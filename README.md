@@ -274,7 +274,8 @@ WeatherRepository.clearData().then( _prevData => {
 });
 ```
 
-#### `.initSyncer()` | Returns: `Void`
+#### `.initSyncer()`
+Returns: `Void`
 
 Initiates a setInterval, which will countdown to the point when the data is out of date (based on the `outOfDateAfter` value) and will trigger a server request to get fresh data.
 
