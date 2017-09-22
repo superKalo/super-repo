@@ -1,6 +1,6 @@
 # <img src="https://user-images.githubusercontent.com/2548061/30693332-c07f5844-9ed7-11e7-970d-17498f7c8e62.png" height="24" alt="Super R" /> SuperRepo
 
-Repository-ish pattern for your data, that implements **best practices** for working with and storing data on the client-side. **Please read [my CSS-Tricks post first](https://paper.dropbox.com/doc/The-Importance-Of-JavaScript-Abstractions-When-Working-With-Remote-Data-72Nk1RlDSfmgc78LO2Rpd).**
+Repository-ish pattern for your data, that implements **best practices** for working with and storing data on the client-side. **Please read [my CSS-Tricks post first](https://css-tricks.com/importance-javascript-abstractions-working-remote-data/).**
 
 > TL;DR: Get ready to make the way you work with and store remote data more maintainable & scalable! :dark_sunglasses: 
 
