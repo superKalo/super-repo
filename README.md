@@ -75,7 +75,9 @@ We're ready to define our `SuperRepo`sitory:
  * 3. Define when the data will get out of date.
  *
  * 4. Define your data model and set custom attribute names for each response items.
-      Remember why? See below.
+ *    In the example, server returns the params 't', 'w', 'p',
+ *    we map them to 'temperature', 'windspeed', and 'pressure' instead.
+ *    Remember why? See below.
  */
 const WeatherRepository = new SuperRepo({
     storage: 'LOCAL_STORAGE',                   // [1]
