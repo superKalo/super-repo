@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>SuperRepo IE11 Example Usage</title>
+</head>
+
+<body>
+
+<p>Open the source code and check it out.</p>
+
+<button id="get" type="button">Get data</button>
+
+<button id="invalidate" type="button">Invalidate data</button>
+<button id="clear" type="button">Clear (delete) data</button>
+
+<button id="sync" type="button">Init Syncer</button>
+<button id="stopsync" type="button">Stop Syncer</button>
+
+<!-- Uncomment for the jQuery $.ajax() example -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
+
+<!-- Link to the SuperRepo library -->
+<script src="../lib/index.js"></script>
+
+
+<script>
+
+    /**
+     * Define a function responsible for getting data from the server.
+     * It doesn't matter how, as long as your function returns a Promise.
+     */
+    var requestWeatherData = function() { return $.ajax({url:'weather.json'}) };
+
+    var WeatherRepository = new SuperRepo({
+        storage: 'LOCAL_STORAGE', // 'LOCAL_STORAGE', 'BROWSER_STORAGE' or 'LOCAL_VARIABLE'
+        name: 'weather',
+        request: requestWeatherData,
+
+        // Optional
+        outOfDateAfter: 30 * 1000, // 30 sec
+
+        // Optional, but recommended
+        dataModel: {
+            temperature: 't',
+            windspeed: 'w',
+            pressure: 'p'
+        },
+
+        // Optional
+        mapData: function(data) {
+            // Convert to Fahrenheit
+            var temperature = (data.temperature * 1.8) + 32;
+
+            // These two sways the same
+            var windspeed = data.windspeed;
+            var pressure = data.pressure;
+
+            return {
+                temperature: temperature,
+                windspeed: windspeed,
+                pressure: pressure
+            };
+        }
+    });
+
+
+    document.getElementById('get').addEventListener('click', function() {
+        WeatherRepository.getData().then(
+            function(_r) { console.log('It is ' + _r.temperature + ' degrees Fahrenheit.') }
+        );
+    });
+
+    document.getElementById('invalidate').addEventListener('click', function() {
+        WeatherRepository.invalidateData().then( function(_response) {
+            console.log('Previous data', _response.prevData);
+            console.log('Next data', _response.nextData);
+        });
+    });
+    document.getElementById('clear').addEventListener('click', function() {
+        WeatherRepository.clearData().then( function(_prevData) {
+            console.log('Previous (just deleted data) data', _prevData);
+        });
+    });
+
+    document.getElementById('sync').addEventListener('click', function() {
+        WeatherRepository.initSyncer();
+    });
+    document.getElementById('stopsync').addEventListener('click', function() {
+        WeatherRepository.destroySyncer();
+    });
+
+</script>
+
+</body>
+</html>
