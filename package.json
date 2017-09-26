@@ -8,7 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "babel": {
-    "presets": ["env"]
+    "presets": [
+      [ "es2015", { "modules": false } ]
+    ]
   },
   "repository": {
     "type": "git",
@@ -28,6 +30,6 @@
   "devDependencies": {
     "babel-cli": "6.26.0",
     "babel-core": "6.26.0",
-    "babel-preset-env": "1.6.0"
+    "babel-preset-es2015": "6.24.1"
   }
 }
