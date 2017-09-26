@@ -339,7 +339,9 @@ Even though SuperRepo can be used in older browsers, please note that our focus 
 
 
 ## :+1: Contributing
-I'm open to ideas and suggestions! If you want to contribute or simply you've cought a bug - you can either open an issue or clone the repository, tweak the `src/index.js` file and fire a Pull Request. There are no *fancy* build steps.
+I'm open to ideas and suggestions! If you want to contribute or simply you've cought a bug - you can either open an issue or clone the repository, tweak the `src/index.js` file and fire a Pull Request.
+
+To generate the distribution files (in the `lib/` directory), run `npm install` and then simply do `npm run build`.
 
 
 ## :oncoming_police_car: License
