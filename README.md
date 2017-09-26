@@ -18,7 +18,7 @@ This package can be installed with:
 - Static HTML:
 
     ```html
-    <script src="/node_modules/super-repo/src/index.js"></script>
+    <script src="node_modules/super-repo/lib/index.js"></script>
     ```
 
 - Using ES6 Imports:
@@ -328,7 +328,7 @@ If you need to support Internet Explorer 11 or any older browser, you need to in
 
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
-<script src="/node_modules/super-repo/src/index.js"></script>
+<script src="/node_modules/super-repo/lib/index.js"></script>
 
 <script>
     const WeatherRepository = new SuperRepo({ /* ... */ });
