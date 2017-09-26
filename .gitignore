@@ -142,7 +142,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/osx,node,windows,sublimetext
-
-
-# Project-specific
-lib/
