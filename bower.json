@@ -1,7 +1,7 @@
 {
   "name": "super-repo",
   "description": "Repository-ish pattern for your data, that implements best practices for working with and storing data on the client-side.",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "authors": [
     "Kaloyan Kosev"
   ],

@@ -18,7 +18,7 @@ This package can be installed with:
 - Static HTML:
 
     ```html
-    <script src="/node_modules/super-repo/src/index.js"></script>
+    <script src="node_modules/super-repo/lib/index.js"></script>
     ```
 
 - Using ES6 Imports:
@@ -310,6 +310,32 @@ WeatherRepository.initSyncer();
 // Do not sync anymore.
 WeatherRepository.destroySyncer();
 ```
+
+
+## :tv: Browser Support
+
+SuperRepo is compiled using [Babel](https://babeljs.io/) to enable support for [ES5 browsers](http://caniuse.com/#feat=es5).
+
+At present, we officially aim to support the last two versions of the following browsers:
+
+- Chrome
+- Firefox
+- Safari
+- Opera
+- Edge
+
+If you need to support Internet Explorer 11 or any older browser, you need to include a polyfill like [polyfill.io](https://polyfill.io/v2/docs/) or [babel-polyfill](https://babeljs.io/docs/usage/polyfill/) that emulates a full ES2015+ environment. Make sure you import the polyfill upfront.
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
+<script src="/node_modules/super-repo/lib/index.js"></script>
+
+<script>
+    const WeatherRepository = new SuperRepo({ /* ... */ });
+</script>
+```
+
+Even though SuperRepo can be used in older browsers, please note that our focus will always be on the modern-ish browsers listed above.
 
 
 ## :+1: Contributing

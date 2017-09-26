@@ -2,9 +2,20 @@
   "name": "super-repo",
   "version": "2.0.4",
   "description": "Repository-ish pattern for your data, that implements best practices for working with and storing data on the client-side.",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
+    "build": "babel src --out-dir lib",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "babel": {
+    "presets": [
+      [
+        "es2015",
+        {
+          "modules": false
+        }
+      ]
+    ]
   },
   "repository": {
     "type": "git",
@@ -20,5 +31,10 @@
   "bugs": {
     "url": "https://github.com/superKalo/super-repo/issues"
   },
-  "homepage": "https://github.com/superKalo/super-repo#readme"
+  "homepage": "https://github.com/superKalo/super-repo#readme",
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-core": "6.26.0",
+    "babel-preset-es2015": "6.24.1"
+  }
 }
