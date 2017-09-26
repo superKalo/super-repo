@@ -177,7 +177,9 @@ Type: `Object` or `Array`
 
 The mapping of the attribute names you'd like to use across your codebase with the attribute names coming from the server response.
 
-- In case the server returns a single Object, you can use the following syntax:
+- In case the server response is a single Object or an Array of Objects:
+
+  - Syntax 1: In case the server returns a single Object, you can use the following syntax:
 
     ```javascript
     const WeatherRepository = new SuperRepo({
@@ -190,7 +192,7 @@ The mapping of the attribute names you'd like to use across your codebase with t
     });
     ```
 
-- In case the server returns an Array of items, you can use the following syntax:
+  - Syntax 2: In case the server returns an Array of items, you can use the following syntax:
 
     ```javascript
     const WeatherRepository = new SuperRepo({
@@ -200,6 +202,41 @@ The mapping of the attribute names you'd like to use across your codebase with t
             windspeed: 'w',
             pressure: 'p'
         }]
+    });
+    ```
+
+- In case the server response is more complex or nested a bit more, use [`mapData`](https://github.com/superKalo/super-repo#mapdata-optional) to apply your data model manually. Here's an example.
+  Let's say our Weather API response is:
+
+    ```json
+    {
+        "current": {
+            "main": {
+                "t": 31,
+                "w": 32,
+                "h": 38
+            },
+            "additional": {
+                "f": 32,
+                "p": 1011
+            }
+        }
+    }
+    ```
+
+    Here's how we handle this case:
+
+    ```javascript
+    const WeatherRepository = new SuperRepo({
+        /* ... */
+        mapData( data => {
+            return {
+                temperature: data.current.main.t,
+                windspeed: data.current.main.w,
+                pressure: data.current.additional.p
+            }
+        });
+        // ... and simply don't pass `dataModel`
     });
     ```
 
