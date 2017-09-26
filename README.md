@@ -335,7 +335,7 @@ If you need to support Internet Explorer 11 or any older browser, you need to in
 </script>
 ```
 
-Even though SuperRepo can be used in older browsers, but please note that our focus will always be on the modern-ish browsers listed above.
+Even though SuperRepo can be used in older browsers, please note that our focus will always be on the modern-ish browsers listed above.
 
 
 ## :+1: Contributing
