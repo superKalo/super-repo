@@ -1,6 +1,6 @@
 {
   "name": "super-repo",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "description": "Repository-ish pattern for your data, that implements best practices for working with and storing data on the client-side.",
   "main": "lib/index.js",
   "scripts": {
@@ -22,9 +22,7 @@
     "url": "git+https://github.com/superKalo/super-repo.git"
   },
   "keywords": [
-    "javascript",
-    "javascript-library",
-    "localstorage"
+    "javascript"
   ],
   "author": "Kaloyan Kosev",
   "license": "MIT",
