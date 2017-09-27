@@ -5,7 +5,11 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
-    "test": "mocha"
+    "build:sourcemap": "babel src --out-dir lib --source-maps=inline",
+    "test": "npm run build:sourcemap && nyc mocha && nyc report --reporter=html && npm run build"
+  },
+  "nyc": {
+    "produce-source-map": true
   },
   "babel": {
     "presets": [
@@ -36,5 +40,8 @@
     "babel-preset-es2015": "6.24.1",
     "chai": "4.1.2",
     "mocha": "3.5.3"
+  },
+  "dependencies": {
+    "nyc": "11.2.1"
   }
 }
