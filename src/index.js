@@ -365,7 +365,7 @@ class SuperRepo {
      * @return {Void}
      */
     initSyncer() {
-        this.storage.get(this.config.name).then(_localData => {
+        return this.storage.get(this.config.name).then(_localData => {
             if (this._isDataUpToDate(_localData)) {
                 const { lastFetched } = _localData;
                 const diff = new Date().valueOf() - lastFetched;

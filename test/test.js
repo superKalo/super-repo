@@ -1,5 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
+const sinon  = require('sinon');
 
 const kindOfRegularResponse = require('./fake-api/kind-of-regular-response.json');
 
@@ -91,4 +92,40 @@ describe('Data Management', () => {
         }).then(done, done);
     });
 
+});
+
+
+describe('Data Sync', () => {
+    var clock;
+
+    before(function () {
+        clock = sinon.useFakeTimers();
+    });
+    after(function () { clock.restore(); });
+
+    it('Initiates a background data sync process that fires a network request as soon as the data gets out of date', done => {
+        var networkRequestsCount = 0;
+
+        var repository = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 3 * 1000, // 3 sec
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve => resolve(kindOfRegularResponse));
+            }
+        });
+
+        expect(networkRequestsCount).to.equal(0);
+
+        repository.initSyncer().then( () => {
+            expect(networkRequestsCount).to.equal(1);
+
+            // TODO: Figure out why this doesn't work
+            // clock.tick(3000);
+
+            // expect(networkRequestsCount).to.equal(2);
+        }).then(done, done);
+    });
 });
