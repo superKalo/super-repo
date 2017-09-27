@@ -98,18 +98,21 @@ describe('Data Management', () => {
 describe('Data Sync', () => {
     var clock;
 
-    before(function () {
+    before(() => {
         clock = sinon.useFakeTimers();
     });
-    after(function () { clock.restore(); });
+    after(() => {
+        clock.restore();
+    });
 
     it('Initiates a background data sync process that fires a network request as soon as the data gets out of date', done => {
-        var networkRequestsCount = 0;
+        const TIMEFRAME = 60 * 1000; // 1 min
+        let networkRequestsCount = 0;
 
-        var repository = new SuperRepo({
+        const repository = new SuperRepo({
             storage: 'LOCAL_VARIABLE',
             name: 'test',
-            outOfDateAfter: 3 * 1000, // 3 sec
+            outOfDateAfter: TIMEFRAME,
             request: () => {
                 networkRequestsCount++;
 
@@ -122,10 +125,17 @@ describe('Data Sync', () => {
         repository.initSyncer().then( () => {
             expect(networkRequestsCount).to.equal(1);
 
-            // TODO: Figure out why this doesn't work
-            // clock.tick(3000);
+            clock.tick(TIMEFRAME - 1);
+            expect(networkRequestsCount).to.equal(1);
 
-            // expect(networkRequestsCount).to.equal(2);
+            clock.tick(1);
+            expect(networkRequestsCount).to.equal(2);
+
+            clock.tick(TIMEFRAME);
+            expect(networkRequestsCount).to.equal(3);
+
+            clock.tick(5 * TIMEFRAME);
+            expect(networkRequestsCount).to.equal(8);
         }).then(done, done);
     });
 });
