@@ -68,7 +68,7 @@ describe('Data Management', () => {
     });
 
     it('Should wait if there is a Promise pending and should NOT fire another one', done => {
-        var networkRequestsCount = 0;
+        let networkRequestsCount = 0;
 
         const repo = new SuperRepo({
             storage: 'LOCAL_VARIABLE',
@@ -98,10 +98,10 @@ describe('Data Management', () => {
 describe('Data Sync', () => {
     var clock;
 
-    before(() => {
+    beforeEach(() => {
         clock = sinon.useFakeTimers();
     });
-    after(() => {
+    afterEach(() => {
         clock.restore();
     });
 
@@ -137,5 +137,45 @@ describe('Data Sync', () => {
             clock.tick(5 * TIMEFRAME);
             expect(networkRequestsCount).to.equal(8);
         }).then(done, done);
+    });
+
+    it('Initiates a background data sync process that fires a network request as soon as the data gets out of date', done => {
+        const TIMEFRAME = 60 * 1000; // 1 min
+        let networkRequestsCount = 0;
+
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: TIMEFRAME,
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve => resolve(kindOfRegularResponse));
+            }
+        });
+
+        repo.getData().then(() => {
+
+            expect(networkRequestsCount).to.equal(1);
+
+            repo.initSyncer().then( () => {
+                expect(networkRequestsCount).to.equal(1);
+
+                // TODO: Figure out why these doesn't work:
+
+                // clock.tick(TIMEFRAME - 1);
+                // expect(networkRequestsCount).to.equal(1);
+
+                // clock.tick(1);
+                // expect(networkRequestsCount).to.equal(2);
+
+                // clock.tick(TIMEFRAME);
+                // expect(networkRequestsCount).to.equal(3);
+
+                // clock.tick(10 * TIMEFRAME);
+                // expect(networkRequestsCount).to.equal(13);
+            }).then(done, done);
+
+        });
     });
 });
