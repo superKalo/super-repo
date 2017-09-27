@@ -66,4 +66,29 @@ describe('Data Management', () => {
         });
     });
 
+    it('Should wait if there is a Promise pending and should NOT fire another one', done => {
+        var networkRequestsCount = 0;
+
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 60 * 1000, // 1 min
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve =>
+                    setTimeout(() => resolve(kindOfRegularResponse), 1000)
+                );
+            }
+        });
+
+        repo.getData();
+        repo.getData();
+        repo.getData();
+
+        repo.getData().then( result => {
+            expect(networkRequestsCount).to.equal(1);
+        }).then(done, done);
+    });
+
 });
