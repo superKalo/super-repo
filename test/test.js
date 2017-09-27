@@ -29,4 +29,41 @@ describe('Data Management', () => {
             expect(result).to.equal(kindOfRegularResponse);
         }).then(done, done);
     });
+
+    it('Should resolve the same data, no matter if it is taken from cache or from a network request', done => {
+        repository.getData().then( () => {
+            repository.getData().then( () => {
+
+                repository.getData().then( result => {
+                    expect(result).to.equal(kindOfRegularResponse);
+                }).then(done, done);
+            });
+        });
+    });
+
+    it('Should do a network request only once', done => {
+        var networkRequestsCount = 0;
+
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 60 * 1000, // 1 min
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve => resolve(kindOfRegularResponse));
+            }
+        });
+
+        repo.getData().then( () => {
+            repo.getData().then( () => {
+
+                repo.getData().then( result => {
+                    expect(networkRequestsCount).to.equal(1);
+                }).then(done, done);
+
+            });
+        });
+    });
+
 });
