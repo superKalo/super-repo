@@ -294,6 +294,24 @@ class SuperRepo {
     }
 
     /**
+     * Forces requesting fresh (new) data.
+     * Additionally, triggers all processes when a new data is received -
+     * maps, normalizes and stores it.
+     *
+     * @return {Promise}
+     */
+    _requestFreshData() {
+        return this.config.request()
+            .then(this._normalizeData.bind(this))
+            .then(this._mapData.bind(this))
+            .then(_response => {
+                this._storeData(_response);
+
+                return _response;
+            });
+    }
+
+    /**
      * Gets data from the server (if it’s missing or outdated on our side)
      * or otherwise - gets it from the cache.
      *
@@ -323,12 +341,8 @@ class SuperRepo {
 
                     _resolve(_localData.data);
                 } else {
-                    config.request()
-                        .then(this._normalizeData.bind(this))
-                        .then(this._mapData.bind(this))
+                    this._requestFreshData()
                         .then(_response => {
-                            this._storeData(_response);
-
                             this.promise = null;
                             this.isPromisePending = false;
 
@@ -353,7 +367,7 @@ class SuperRepo {
         const interval = _interval < 1000 ? 1000: _interval;
 
         return setInterval(
-            () => this.getData(), interval
+            () => this._requestFreshData(), interval
         );
     }
 
@@ -365,23 +379,30 @@ class SuperRepo {
      * @return {Void}
      */
     initSyncer() {
-        return this.storage.get(this.config.name).then(_localData => {
-            if (this._isDataUpToDate(_localData)) {
-                const { lastFetched } = _localData;
-                const diff = new Date().valueOf() - lastFetched;
+        return new Promise(_resolve => {
+            this.storage.get(this.config.name).then(_localData => {
+                if (this._isDataUpToDate(_localData)) {
+                    const { lastFetched } = _localData;
+                    const diff = new Date().valueOf() - lastFetched;
 
-                this.syncInterval = this._initSyncInterval(diff);
+                    this.syncInterval = this._initSyncInterval(diff);
 
-                setTimeout( () => {
-                    this.syncInterval = this._initSyncInterval(this.config.outOfDateAfter);
-                }, diff);
-            } else {
-                this.getData().then(r => {
-                    this.syncInterval = this._initSyncInterval(this.config.outOfDateAfter)
+                    setTimeout( () => {
+                        this.syncInterval =
+                            this._initSyncInterval(this.config.outOfDateAfter);
+                    }, diff);
 
-                    return r;
-                });
-            }
+                    _resolve();
+                } else {
+                    this._requestFreshData()
+                        .then(_response => {
+                            this.syncInterval =
+                                this._initSyncInterval(this.config.outOfDateAfter);
+
+                            _resolve();
+                        });
+                }
+            });
         });
     }
 
