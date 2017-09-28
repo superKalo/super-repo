@@ -82,4 +82,34 @@ describe('Data Model', () => {
             });
         }).then(done, done);
     });
+
+    it('Should apply the custom data mapping', done => {
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 60 * 1000, // 1 min
+            dataModel: {
+                temperature: 't',
+                currentday: 'day'
+            },
+            mapData: data => {
+                return {
+                    'varna': {
+                        hour: data.currentday.hour,
+                        temperature: data.temperature
+                    }
+                };
+            },
+            request: () => new Promise(_r => _r(nestedObjectResponse))
+        });
+
+        repo.getData().then( data => {
+            expect(data).to.have.property('varna');
+
+            expect(nestedObjectResponse.day.hour).to.equal(data.varna.hour);
+            expect(nestedObjectResponse.t).to.equal(data.varna.temperature);
+
+            expect(data).to.not.have.property('day');
+        }).then(done, done);
+    });
 });
