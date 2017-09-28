@@ -2,6 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const kindOfRegularResponse = require('./fake-api/kind-of-regular-response.json');
+const nestedObjectResponse = require('./fake-api/nested-object-response.json');
 const arrayOfObjectsResponse = require('./fake-api/array-of-objects-response.json');
 
 const SuperRepo = require('../lib/index.js');
@@ -134,6 +135,26 @@ describe('Data Management', () => {
         }).then(done, done);
     });
 
+    it('Should apply the data model. Case: response is a nested Object.', done => {
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 60 * 1000, // 1 min
+            dataModel: {
+                currentday: 'day'
+            },
+            request: () => new Promise(_r => _r(nestedObjectResponse))
+        });
+
+        repo.getData().then( data => {
+            expect(data).to.have.property('currentday');
+
+            expect(nestedObjectResponse.day).to.equal(data.currentday);
+
+            expect(data).to.not.have.property('day');
+        }).then(done, done);
+    });
+
     it('Should apply the data model. Case: response is an Array of Objects.', done => {
         const repo = new SuperRepo({
             storage: 'LOCAL_VARIABLE',
@@ -163,6 +184,5 @@ describe('Data Management', () => {
             });
         }).then(done, done);
     });
-
 
 });
