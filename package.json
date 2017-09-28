@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel src --out-dir lib",
     "build:sourcemap": "babel src --out-dir lib --source-maps=inline",
-    "test": "npm run build:sourcemap && nyc mocha && nyc report --reporter=html && npm run build"
+    "test": "npm run build:sourcemap && nyc mocha && nyc report --reporter=html && git checkout lib/index.js"
   },
   "nyc": {
     "produce-source-map": true
