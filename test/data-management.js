@@ -91,4 +91,20 @@ describe('Data Management', () => {
         }).then(done, done);
     });
 
+    it('Should clear the currently cached data.', done => {
+        repository.getData().then( () => {
+            repository.clearData().then(() => {
+                expect(repository.data).to.equal(null);
+            }).then(done, done);
+        });
+    });
+
+    it('Should return the previous data when the currently cached data is cleared', done => {
+        repository.getData().then( () => {
+            repository.clearData().then(prevData => {
+                expect(prevData.data).to.equal(kindOfRegularResponse);
+            }).then(done, done);
+        });
+    });
+
 });
