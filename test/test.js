@@ -143,7 +143,7 @@ describe('Data Sync', () => {
         const TIMEFRAME = 60 * 1000; // 1 min
         let networkRequestsCount = 0;
 
-        const repo = new SuperRepo({
+        const repository = new SuperRepo({
             storage: 'LOCAL_VARIABLE',
             name: 'test',
             outOfDateAfter: TIMEFRAME,
@@ -154,11 +154,11 @@ describe('Data Sync', () => {
             }
         });
 
-        repo.getData().then(() => {
+        repository.getData().then(() => {
 
             expect(networkRequestsCount).to.equal(1);
 
-            repo.initSyncer().then( () => {
+            repository.initSyncer().then( () => {
                 expect(networkRequestsCount).to.equal(1);
 
                 clock.tick(TIMEFRAME - 1);
@@ -182,7 +182,7 @@ describe('Data Sync', () => {
         const TIMEFRAME = 60 * 1000; // 1 min
         let networkRequestsCount = 0;
 
-        const repo = new SuperRepo({
+        const repository = new SuperRepo({
             storage: 'LOCAL_VARIABLE',
             name: 'test',
             outOfDateAfter: TIMEFRAME,
@@ -193,12 +193,12 @@ describe('Data Sync', () => {
             }
         });
 
-        repo.getData().then(() => {
+        repository.getData().then(() => {
             expect(networkRequestsCount).to.equal(1);
 
             clock.tick(TIMEFRAME - 1000);
 
-            repo.initSyncer().then( () => {
+            repository.initSyncer().then( () => {
                 expect(networkRequestsCount).to.equal(1);
 
                 clock.tick(1000);
