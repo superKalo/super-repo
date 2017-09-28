@@ -98,18 +98,15 @@ describe('Data Management', () => {
 describe('Data Sync', () => {
     var clock;
 
+    let repository;
+    const TIMEFRAME = 60 * 1000; // 1 min
+    let networkRequestsCount;
+
     beforeEach(() => {
         clock = sinon.useFakeTimers();
-    });
-    afterEach(() => {
-        clock.restore();
-    });
+        networkRequestsCount = 0;
 
-    it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is outdated, therefore, the process should start with a network request. ', done => {
-        const TIMEFRAME = 60 * 1000; // 1 min
-        let networkRequestsCount = 0;
-
-        const repository = new SuperRepo({
+        repository = new SuperRepo({
             storage: 'LOCAL_VARIABLE',
             name: 'test',
             outOfDateAfter: TIMEFRAME,
@@ -119,7 +116,12 @@ describe('Data Sync', () => {
                 return new Promise(resolve => resolve(kindOfRegularResponse));
             }
         });
+    });
+    afterEach(() => {
+        clock.restore();
+    });
 
+    it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is outdated, therefore, the process should start with a network request. ', done => {
         expect(networkRequestsCount).to.equal(0);
 
         repository.initSyncer().then( () => {
@@ -140,20 +142,6 @@ describe('Data Sync', () => {
     });
 
     it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is NOT outdated, therefore, the process should NOT start with a network request. Case: there is NO delay between getting the data and initiating the sync process.', done => {
-        const TIMEFRAME = 60 * 1000; // 1 min
-        let networkRequestsCount = 0;
-
-        const repository = new SuperRepo({
-            storage: 'LOCAL_VARIABLE',
-            name: 'test',
-            outOfDateAfter: TIMEFRAME,
-            request: () => {
-                networkRequestsCount++;
-
-                return new Promise(resolve => resolve(kindOfRegularResponse));
-            }
-        });
-
         repository.getData().then(() => {
 
             expect(networkRequestsCount).to.equal(1);
@@ -179,20 +167,6 @@ describe('Data Sync', () => {
     });
 
     it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is NOT outdated, therefore, the process should NOT start with a network request. Case: there is delay between getting the data and initiating the sync process.', done => {
-        const TIMEFRAME = 60 * 1000; // 1 min
-        let networkRequestsCount = 0;
-
-        const repository = new SuperRepo({
-            storage: 'LOCAL_VARIABLE',
-            name: 'test',
-            outOfDateAfter: TIMEFRAME,
-            request: () => {
-                networkRequestsCount++;
-
-                return new Promise(resolve => resolve(kindOfRegularResponse));
-            }
-        });
-
         repository.getData().then(() => {
             expect(networkRequestsCount).to.equal(1);
 
@@ -214,20 +188,6 @@ describe('Data Sync', () => {
     });
 
     it('Should stop the background data sync process.', done => {
-        const TIMEFRAME = 60 * 1000; // 1 min
-        let networkRequestsCount = 0;
-
-        const repository = new SuperRepo({
-            storage: 'LOCAL_VARIABLE',
-            name: 'test',
-            outOfDateAfter: TIMEFRAME,
-            request: () => {
-                networkRequestsCount++;
-
-                return new Promise(resolve => resolve(kindOfRegularResponse));
-            }
-        });
-
         repository.initSyncer().then( () => {
             expect(networkRequestsCount).to.equal(1);
 
