@@ -212,6 +212,4 @@ describe('Data Sync', () => {
             expect(networkRequestsCount).to.equal(13);
         }).then(done, done);
     });
-
-
 });
