@@ -79,7 +79,28 @@ describe('Data Sync', () => {
         repository.getData().then(() => {
             expect(networkRequestsCount).to.equal(1);
 
-            clock.tick(TIMEFRAME - 1000);
+            clock.tick(TIMEFRAME - 2000);
+
+            repository.initSyncer().then( () => {
+                expect(networkRequestsCount).to.equal(1);
+
+                clock.tick(2000);
+                expect(networkRequestsCount).to.equal(2);
+
+                clock.tick(TIMEFRAME);
+                expect(networkRequestsCount).to.equal(3);
+
+                clock.tick(100 * TIMEFRAME);
+                expect(networkRequestsCount).to.equal(103);
+            }).then(done, done);
+        });
+    });
+
+    it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is NOT outdated, therefore, the process should NOT start with a network request. Case: there is delay LESS THAN 1 SECOND between getting the data and initiating the sync process.', done => {
+        repository.getData().then(() => {
+            expect(networkRequestsCount).to.equal(1);
+
+            clock.tick(TIMEFRAME - 500);
 
             repository.initSyncer().then( () => {
                 expect(networkRequestsCount).to.equal(1);
