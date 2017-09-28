@@ -20,7 +20,7 @@ describe('Initialization', function() {
             request
         });
 
-        expect(repo.config.outOfDateAfter).to.equal(1000);
+        expect(repo.config.outOfDateAfter).to.equal(-1);
         expect(repo.config.storage).to.equal('LOCAL_STORAGE');
 
         expect(repo.config.name).to.equal('test');
