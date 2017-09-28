@@ -139,7 +139,7 @@ describe('Data Sync', () => {
         }).then(done, done);
     });
 
-    it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is NOT outdated, therefore, the process should NOT start with a network request.', done => {
+    it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is NOT outdated, therefore, the process should NOT start with a network request. Case: there is NO delay between getting the data and initiating the sync process.', done => {
         const TIMEFRAME = 60 * 1000; // 1 min
         let networkRequestsCount = 0;
 
@@ -175,6 +175,41 @@ describe('Data Sync', () => {
                 expect(networkRequestsCount).to.equal(13);
             }).then(done, done);
 
+        });
+    });
+
+    it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is NOT outdated, therefore, the process should NOT start with a network request. Case: there is delay between getting the data and initiating the sync process.', done => {
+        const TIMEFRAME = 60 * 1000; // 1 min
+        let networkRequestsCount = 0;
+
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: TIMEFRAME,
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve => resolve(kindOfRegularResponse));
+            }
+        });
+
+        repo.getData().then(() => {
+            expect(networkRequestsCount).to.equal(1);
+
+            clock.tick(TIMEFRAME - 1000);
+
+            repo.initSyncer().then( () => {
+                expect(networkRequestsCount).to.equal(1);
+
+                clock.tick(1000);
+                expect(networkRequestsCount).to.equal(2);
+
+                clock.tick(TIMEFRAME);
+                expect(networkRequestsCount).to.equal(3);
+
+                clock.tick(100 * TIMEFRAME);
+                expect(networkRequestsCount).to.equal(103);
+            }).then(done, done);
         });
     });
 });
