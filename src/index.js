@@ -122,10 +122,8 @@ class SuperRepo {
         const { outOfDateAfter } = _config
         const outOfDateAfterIsMissing =
             typeof outOfDateAfter === 'undefined' || outOfDateAfter === null;
-        if (outOfDateAfterIsMissing || outOfDateAfter === -1 || outOfDateAfter < 1000) {
-            // Due to performance reasons, make sure `outOfDateAfter` period
-            // is not faster than 1 second.
-            this.config.outOfDateAfter = 1000;
+        if (outOfDateAfterIsMissing) {
+            this.config.outOfDateAfter = -1;
         }
 
         /**
@@ -218,8 +216,10 @@ class SuperRepo {
      * @return {Promise}
      */
     getDataUpToDateStatus() {
+        const { name, outOfDateAfter } = this.config;
+
         return new Promise(_resolve => {
-            this.storage.get(this.config.name).then(_localStore => {
+            this.storage.get(name).then(_localStore => {
 
                 const isDataMissing =
                     _localStore === null || // Local Storage
@@ -239,7 +239,7 @@ class SuperRepo {
                 } else {
                     const { lastFetched } = _localStore;
                     const isLimitExceeded =
-                        (new Date().valueOf() - lastFetched) > this.config.outOfDateAfter;
+                        (new Date().valueOf() - lastFetched) > outOfDateAfter;
 
                     _resolve({
                         isDataUpToDate: ! isLimitExceeded,
@@ -380,8 +380,12 @@ class SuperRepo {
      * @return {Void}
      */
     _initSyncInterval(_interval) {
+        // Do not initiate intervals which are quicker then a second,
+        // otherwise, this might be a big network (performance) overhead.
+        const interval = _interval < 1000 ? 1000: _interval;
+
         return setInterval(
-            () => this._requestFreshData(), _interval
+            () => this._requestFreshData(), interval
         );
     }
 
@@ -393,17 +397,21 @@ class SuperRepo {
      * @return {Void}
      */
     initSyncer() {
+        const { outOfDateAfter } = this.config;
+
         return new Promise(_resolve => {
             this.getDataUpToDateStatus().then(_res => {
+
+                /**
+                 * If data is up to date, determine when it gets outdated.
+                 * Fire a setTimeout until then. Finally,
+                 * initiate a regular setInterval.
+                 */
                 if (_res.isDataUpToDate) {
                     const { lastFetched } = _res.localData;
 
                     const diff = new Date().valueOf() - lastFetched;
-                    let remainingTime = this.config.outOfDateAfter - diff;
-
-                    // Do not initiate intervals which are quicker then a second,
-                    // otherwise, this might be a big network (performance) overhead.
-                    remainingTime = remainingTime < 1000 ? 1000 : remainingTime;
+                    let remainingTime = outOfDateAfter - diff;
 
                     this.syncInterval = this._initSyncInterval(remainingTime);
 
@@ -411,15 +419,15 @@ class SuperRepo {
                         this.destroySyncer();
 
                         this.syncInterval =
-                            this._initSyncInterval(this.config.outOfDateAfter);
-                    }, remainingTime);
+                            this._initSyncInterval(outOfDateAfter);
+                    }, remainingTime < 1000 ? 1000 : remainingTime);
 
                     _resolve();
                 } else {
                     this._requestFreshData()
                         .then(_response => {
                             this.syncInterval =
-                                this._initSyncInterval(this.config.outOfDateAfter);
+                                this._initSyncInterval(outOfDateAfter);
 
                             _resolve();
                         });
