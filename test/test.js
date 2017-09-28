@@ -212,4 +212,44 @@ describe('Data Sync', () => {
             }).then(done, done);
         });
     });
+
+    it('Should stop the background data sync process.', done => {
+        const TIMEFRAME = 60 * 1000; // 1 min
+        let networkRequestsCount = 0;
+
+        const repository = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: TIMEFRAME,
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve => resolve(kindOfRegularResponse));
+            }
+        });
+
+        repository.initSyncer().then( () => {
+            expect(networkRequestsCount).to.equal(1);
+
+            clock.tick(TIMEFRAME);
+            expect(networkRequestsCount).to.equal(2);
+
+            repository.destroySyncer();
+
+            clock.tick(100 * TIMEFRAME);
+            expect(networkRequestsCount).to.equal(2);
+
+            repository.initSyncer().then( () => {
+                expect(networkRequestsCount).to.equal(3);
+
+                clock.tick(TIMEFRAME);
+                expect(networkRequestsCount).to.equal(4);
+
+                repository.destroySyncer();
+
+                clock.tick(100 * TIMEFRAME);
+                expect(networkRequestsCount).to.equal(4);
+            }).then(done, done);
+        });
+    });
 });
