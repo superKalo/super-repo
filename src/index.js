@@ -137,6 +137,8 @@ class SuperRepo {
         this.promise = null;
         this.isPromisePending = false;
 
+        this.config.storage = _config.storage ? _config.storage : 'LOCAL_STORAGE';
+
         switch(this.config.storage) {
             case 'LOCAL_VARIABLE': {
                 // Introduce this local variable to hold the repository data
@@ -149,8 +151,7 @@ class SuperRepo {
                 this.storage = new BrowserStorageAdapter();
                 break;
             }
-            case 'LOCAL_STORAGE':
-            default: {
+            case 'LOCAL_STORAGE': {
                 this.storage = new LocalStorageAdapter();
                 break;
             }
