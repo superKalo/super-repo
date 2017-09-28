@@ -383,16 +383,18 @@ class SuperRepo {
             this.storage.get(this.config.name).then(_localData => {
                 if (this._isDataUpToDate(_localData)) {
                     const { lastFetched } = _localData;
-                    const diff = new Date().valueOf() - lastFetched;
 
-                    this.syncInterval = this._initSyncInterval(diff);
+                    const diff = new Date().valueOf() - lastFetched;
+                    const remainingTime = this.config.outOfDateAfter - diff;
+
+                    this.syncInterval = this._initSyncInterval(remainingTime);
 
                     setTimeout( () => {
                         this.destroySyncer();
 
                         this.syncInterval =
                             this._initSyncInterval(this.config.outOfDateAfter);
-                    }, diff);
+                    }, remainingTime);
 
                     _resolve();
                 } else {
