@@ -105,7 +105,7 @@ describe('Data Sync', () => {
         clock.restore();
     });
 
-    it('Initiates a background data sync process that fires a network request as soon as the data gets out of date', done => {
+    it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is outdated, therefore, the process should start with a network request. ', done => {
         const TIMEFRAME = 60 * 1000; // 1 min
         let networkRequestsCount = 0;
 
@@ -139,7 +139,7 @@ describe('Data Sync', () => {
         }).then(done, done);
     });
 
-    it('Initiates a background data sync process that fires a network request as soon as the data gets out of date', done => {
+    it('Should initiate a background data sync process that fires a network request as soon as the data gets out of date. Initially, data is NOT outdated, therefore, the process should NOT start with a network request.', done => {
         const TIMEFRAME = 60 * 1000; // 1 min
         let networkRequestsCount = 0;
 
@@ -161,19 +161,18 @@ describe('Data Sync', () => {
             repo.initSyncer().then( () => {
                 expect(networkRequestsCount).to.equal(1);
 
-                // TODO: Figure out why these doesn't work:
+                clock.tick(TIMEFRAME - 1);
 
-                // clock.tick(TIMEFRAME - 1);
-                // expect(networkRequestsCount).to.equal(1);
+                expect(networkRequestsCount).to.equal(1);
 
-                // clock.tick(1);
-                // expect(networkRequestsCount).to.equal(2);
+                clock.tick(1);
+                expect(networkRequestsCount).to.equal(2);
 
-                // clock.tick(TIMEFRAME);
-                // expect(networkRequestsCount).to.equal(3);
+                clock.tick(TIMEFRAME);
+                expect(networkRequestsCount).to.equal(3);
 
-                // clock.tick(10 * TIMEFRAME);
-                // expect(networkRequestsCount).to.equal(13);
+                clock.tick(10 * TIMEFRAME);
+                expect(networkRequestsCount).to.equal(13);
             }).then(done, done);
 
         });

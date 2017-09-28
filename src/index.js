@@ -388,6 +388,8 @@ class SuperRepo {
                     this.syncInterval = this._initSyncInterval(diff);
 
                     setTimeout( () => {
+                        this.destroySyncer();
+
                         this.syncInterval =
                             this._initSyncInterval(this.config.outOfDateAfter);
                     }, diff);
