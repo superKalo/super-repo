@@ -59,6 +59,31 @@ describe('Data Management', () => {
         });
     });
 
+    it('Should initiate a network request every time.', done => {
+        let networkRequestsCount = 0;
+
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: -1,
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve => resolve('whatever'));
+            }
+        });
+
+        repo.getData().then( () => {
+            repo.getData().then( () => {
+                repo.getData().then(() => {
+                    repo.getData().then( result => {
+                        expect(networkRequestsCount).to.equal(4);
+                    }).then(done, done);
+                });
+            });
+        });
+    });
+
     it('Should wait if there is a Promise pending and should NOT fire another one', done => {
         let networkRequestsCount = 0;
 
@@ -118,5 +143,4 @@ describe('Data Management', () => {
             });
         });
     });
-
 });
