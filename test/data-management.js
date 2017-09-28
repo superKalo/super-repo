@@ -108,6 +108,14 @@ describe('Data Management', () => {
         });
     });
 
+    it('Should have up to date data.', done => {
+        repository.getData().then( () => {
+            repository.getDataUpToDateStatus().then(_res => {
+                expect(_res.isDataUpToDate).to.equal(true);
+            }).then(done, done);
+        });
+    });
+
     it('Should invalidate the data.', done => {
         repository.getData().then( () => {
             repository.invalidateData().then( () => {
