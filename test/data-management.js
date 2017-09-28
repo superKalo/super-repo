@@ -107,4 +107,15 @@ describe('Data Management', () => {
             }).then(done, done);
         });
     });
+
+    it('Should invalidate the data.', done => {
+        repository.getData().then( () => {
+            repository.invalidateData().then( () => {
+                repository.getDataUpToDateStatus().then(_res => {
+                    expect(_res.isDataUpToDate).to.equal(false);
+                }).then(done, done);
+            });
+        });
+    });
+
 });

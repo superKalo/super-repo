@@ -212,30 +212,41 @@ class SuperRepo {
     }
 
     /**
-     * Checks if repository the data is up to date or not.
+     * Checks if the repository data is up to date or not.
      *
-     * @return {Boolean}
+     * @return {Promise}
      */
-    _isDataUpToDate(_localStore) {
-        const isDataMissing =
-            _localStore === null || // Local Storage
-            typeof _localStore === 'undefined' || // Browser Storage
-            Object.keys(_localStore.data).length === 0;
+    getDataUpToDateStatus() {
+        return new Promise(_resolve => {
+            this.storage.get(this.config.name).then(_localStore => {
 
-        if (isDataMissing) {
-            return false;
-        }
+                const isDataMissing =
+                    _localStore === null || // Local Storage
+                    typeof _localStore === 'undefined' || // Browser Storage
+                    Object.keys(_localStore.data).length === 0;
 
-        if (_localStore.isInvalid) {
-            return false;
-        }
+                if (isDataMissing) {
+                    _resolve({
+                        isDataUpToDate: false,
+                        localData: _localStore
+                    });
+                } else if (_localStore.isInvalid) {
+                    _resolve({
+                        isDataUpToDate: false,
+                        localData: _localStore
+                    });
+                } else {
+                    const { lastFetched } = _localStore;
+                    const isLimitExceeded =
+                        (new Date().valueOf() - lastFetched) > this.config.outOfDateAfter;
 
-        const { lastFetched } = _localStore;
-
-        const isLimitExceeded =
-            (new Date().valueOf() - lastFetched) > this.config.outOfDateAfter;
-
-        return ! isLimitExceeded;
+                    _resolve({
+                        isDataUpToDate: ! isLimitExceeded,
+                        localData: _localStore
+                    });
+                }
+            });
+        });
     }
 
     /**
@@ -340,12 +351,12 @@ class SuperRepo {
 
         return this.promise = new Promise(_resolve => {
 
-            this.storage.get(config.name).then(_localData => {
-                if (this._isDataUpToDate(_localData)) {
+            this.getDataUpToDateStatus().then(_res => {
+                if (_res.isDataUpToDate) {
                     this.promise = null;
                     this.isPromisePending = false;
 
-                    _resolve(_localData.data);
+                    _resolve(_res.localData.data);
                 } else {
                     this._requestFreshData()
                         .then(_response => {
@@ -382,9 +393,9 @@ class SuperRepo {
      */
     initSyncer() {
         return new Promise(_resolve => {
-            this.storage.get(this.config.name).then(_localData => {
-                if (this._isDataUpToDate(_localData)) {
-                    const { lastFetched } = _localData;
+            this.getDataUpToDateStatus().then(_res => {
+                if (_res.isDataUpToDate) {
+                    const { lastFetched } = _res.localData;
 
                     const diff = new Date().valueOf() - lastFetched;
                     let remainingTime = this.config.outOfDateAfter - diff;
