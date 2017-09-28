@@ -120,11 +120,11 @@ class SuperRepo {
 
         /** Default out of date period  */
         const { outOfDateAfter } = _config
-        if (typeof outOfDateAfter === 'undefined' || outOfDateAfter === null) {
-            this.config.outOfDateAfter = -1;
-        } else if (outOfDateAfter < 1000) {
+        const outOfDateAfterIsMissing =
+            typeof outOfDateAfter === 'undefined' || outOfDateAfter === null;
+        if (outOfDateAfterIsMissing || outOfDateAfter === -1 || outOfDateAfter < 1000) {
             // Due to performance reasons, make sure `outOfDateAfter` period
-            // is not less than 1 second.
+            // is not faster than 1 second.
             this.config.outOfDateAfter = 1000;
         }
 
