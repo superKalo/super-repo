@@ -102,6 +102,7 @@ describe('Data Management', () => {
     it('Should return the previous data when the currently cached data is cleared', done => {
         repository.getData().then( () => {
             repository.clearData().then(prevData => {
+                // TODO: More complex process.
                 expect(prevData.data).to.equal(kindOfRegularResponse);
             }).then(done, done);
         });
