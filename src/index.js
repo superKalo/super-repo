@@ -118,9 +118,15 @@ class SuperRepo {
     constructor(_config) {
         this.config = _config;
 
-        /** Set default values */
+        /** Default out of date period  */
         const { outOfDateAfter } = _config
-        this.config.outOfDateAfter = outOfDateAfter ? outOfDateAfter : -1;
+        if (typeof outOfDateAfter === 'undefined' || outOfDateAfter === null) {
+            this.config.outOfDateAfter = -1;
+        } else if (outOfDateAfter < 1000) {
+            // Due to performance reasons, make sure `outOfDateAfter` period
+            // is not less than 1 second.
+            this.config.outOfDateAfter = 1000;
+        }
 
         /**
          * Helper variables to hold the currently pending Promise (this.promise)
@@ -362,12 +368,8 @@ class SuperRepo {
      * @return {Void}
      */
     _initSyncInterval(_interval) {
-        // Do not initiate intervals which are quicker then a second,
-        // otherwise, this might be a big network (performance) overhead.
-        const interval = _interval < 1000 ? 1000: _interval;
-
         return setInterval(
-            () => this._requestFreshData(), interval
+            () => this._requestFreshData(), _interval
         );
     }
 
@@ -385,7 +387,11 @@ class SuperRepo {
                     const { lastFetched } = _localData;
 
                     const diff = new Date().valueOf() - lastFetched;
-                    const remainingTime = this.config.outOfDateAfter - diff;
+                    let remainingTime = this.config.outOfDateAfter - diff;
+
+                    // Do not initiate intervals which are quicker then a second,
+                    // otherwise, this might be a big network (performance) overhead.
+                    remainingTime = remainingTime < 1000 ? 1000 : remainingTime;
 
                     this.syncInterval = this._initSyncInterval(remainingTime);
 

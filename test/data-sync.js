@@ -121,4 +121,35 @@ describe('Data Sync', () => {
             }).then(done, done);
         });
     });
+
+    it('Should NOT initiate a background data sync process faster than 1 second', done => {
+        let networkRequestsCount = 0;
+
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 500,
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve => resolve({ whatever: true }));
+            }
+        });
+
+        repo.initSyncer().then( () => {
+            expect(networkRequestsCount).to.equal(1);
+
+            clock.tick(500);
+            expect(networkRequestsCount).to.equal(1);
+
+            clock.tick(500);
+            expect(networkRequestsCount).to.equal(2);
+
+            clock.tick(1000);
+            expect(networkRequestsCount).to.equal(3);
+
+            clock.tick(10 * 1000);
+            expect(networkRequestsCount).to.equal(13);
+        }).then(done, done);
+    });
 });
