@@ -407,8 +407,14 @@ Even though SuperRepo can be used in older browsers, please note that our focus 
 ## :+1: Contributing
 I'm open to ideas and suggestions! If you want to contribute or simply you've cought a bug - you can either open an issue or clone the repository, tweak the `src/index.js` file and fire a Pull Request.
 
-To generate the distribution files (in the `lib/` directory), run `npm install` and then simply do `npm run build`.
+To install the project, first make sure you have NodeJS and NPM installed. Preferably, the latest versions, but anything not extremely old should work too. Then, simply run `npm install`.
 
+To generate the distribution files (in the `lib/` directory), do `npm run build`.
+
+To run the tests and generate a test report (both, as output in the CLI and as HTML in the `coverage/` directory), do `npm run test`.
+
+> One little gotcha: in order for the test report to show the actual code line numbers (from `src/index.js`), rather than the code lines of the compiled one (from `src/index.js`), the test command first generates a build with a sourcemap inlined (in `lib/index.js`), then runs the actual tests and finally - undoes the changes in to `lib/index.js` (`git checkout lib/index.js`).
+> Therefore, do not wonder why in case you do any changes to the distribution file in `lib/index.js`, after running the tests - they dissappear!
 
 ## :oncoming_police_car: License
 The code and the documentation are released under the [MIT License](https://github.com/superKalo/repository/blob/master/LICENSE).
