@@ -118,9 +118,13 @@ class SuperRepo {
     constructor(_config) {
         this.config = _config;
 
-        /** Set default values */
+        /** Default out of date period  */
         const { outOfDateAfter } = _config
-        this.config.outOfDateAfter = outOfDateAfter ? outOfDateAfter : -1;
+        const outOfDateAfterIsMissing =
+            typeof outOfDateAfter === 'undefined' || outOfDateAfter === null;
+        if (outOfDateAfterIsMissing) {
+            this.config.outOfDateAfter = -1;
+        }
 
         /**
          * Helper variables to hold the currently pending Promise (this.promise)
@@ -130,6 +134,8 @@ class SuperRepo {
          */
         this.promise = null;
         this.isPromisePending = false;
+
+        this.config.storage = _config.storage ? _config.storage : 'LOCAL_STORAGE';
 
         switch(this.config.storage) {
             case 'LOCAL_VARIABLE': {
@@ -143,8 +149,7 @@ class SuperRepo {
                 this.storage = new BrowserStorageAdapter();
                 break;
             }
-            case 'LOCAL_STORAGE':
-            default: {
+            case 'LOCAL_STORAGE': {
                 this.storage = new LocalStorageAdapter();
                 break;
             }
@@ -206,30 +211,43 @@ class SuperRepo {
     }
 
     /**
-     * Checks if repository the data is up to date or not.
+     * Checks if the repository data is up to date or not.
      *
-     * @return {Boolean}
+     * @return {Promise}
      */
-    _isDataUpToDate(_localStore) {
-        const isDataMissing =
-            _localStore === null || // Local Storage
-            typeof _localStore === 'undefined' || // Browser Storage
-            Object.keys(_localStore.data).length === 0;
+    getDataUpToDateStatus() {
+        const { name, outOfDateAfter } = this.config;
 
-        if (isDataMissing) {
-            return false;
-        }
+        return new Promise(_resolve => {
+            this.storage.get(name).then(_localStore => {
 
-        if (_localStore.isInvalid) {
-            return false;
-        }
+                const isDataMissing =
+                    _localStore === null || // Local Storage
+                    typeof _localStore === 'undefined' || // Browser Storage
+                    Object.keys(_localStore.data).length === 0;
 
-        const { lastFetched } = _localStore;
+                if (isDataMissing) {
+                    _resolve({
+                        isDataUpToDate: false,
+                        localData: _localStore
+                    });
+                } else if (_localStore.isInvalid) {
+                    _resolve({
+                        isDataUpToDate: false,
+                        localData: _localStore
+                    });
+                } else {
+                    const { lastFetched } = _localStore;
+                    const isLimitExceeded =
+                        (new Date().valueOf() - lastFetched) > outOfDateAfter;
 
-        const isLimitExceeded =
-            (new Date().valueOf() - lastFetched) > this.config.outOfDateAfter;
-
-        return ! isLimitExceeded;
+                    _resolve({
+                        isDataUpToDate: ! isLimitExceeded,
+                        localData: _localStore
+                    });
+                }
+            });
+        });
     }
 
     /**
@@ -294,6 +312,24 @@ class SuperRepo {
     }
 
     /**
+     * Forces requesting fresh (new) data.
+     * Additionally, triggers all processes when a new data is received -
+     * maps, normalizes and stores it.
+     *
+     * @return {Promise}
+     */
+    _requestFreshData() {
+        return this.config.request()
+            .then(this._normalizeData.bind(this))
+            .then(this._mapData.bind(this))
+            .then(_response => {
+                this._storeData(_response);
+
+                return _response;
+            });
+    }
+
+    /**
      * Gets data from the server (if it’s missing or outdated on our side)
      * or otherwise - gets it from the cache.
      *
@@ -316,19 +352,15 @@ class SuperRepo {
 
         return this.promise = new Promise(_resolve => {
 
-            this.storage.get(config.name).then(_localData => {
-                if (this._isDataUpToDate(_localData)) {
+            this.getDataUpToDateStatus().then(_res => {
+                if (_res.isDataUpToDate) {
                     this.promise = null;
                     this.isPromisePending = false;
 
-                    _resolve(_localData.data);
+                    _resolve(_res.localData.data);
                 } else {
-                    config.request()
-                        .then(this._normalizeData.bind(this))
-                        .then(this._mapData.bind(this))
+                    this._requestFreshData()
                         .then(_response => {
-                            this._storeData(_response);
-
                             this.promise = null;
                             this.isPromisePending = false;
 
@@ -353,7 +385,7 @@ class SuperRepo {
         const interval = _interval < 1000 ? 1000: _interval;
 
         return setInterval(
-            () => this.getData(), interval
+            () => this._requestFreshData(), interval
         );
     }
 
@@ -365,23 +397,42 @@ class SuperRepo {
      * @return {Void}
      */
     initSyncer() {
-        this.storage.get(this.config.name).then(_localData => {
-            if (this._isDataUpToDate(_localData)) {
-                const { lastFetched } = _localData;
-                const diff = new Date().valueOf() - lastFetched;
+        const { outOfDateAfter } = this.config;
 
-                this.syncInterval = this._initSyncInterval(diff);
+        return new Promise(_resolve => {
+            this.getDataUpToDateStatus().then(_res => {
 
-                setTimeout( () => {
-                    this.syncInterval = this._initSyncInterval(this.config.outOfDateAfter);
-                }, diff);
-            } else {
-                this.getData().then(r => {
-                    this.syncInterval = this._initSyncInterval(this.config.outOfDateAfter)
+                /**
+                 * If data is up to date, determine when it gets outdated.
+                 * Fire a setTimeout until then. Finally,
+                 * initiate a regular setInterval.
+                 */
+                if (_res.isDataUpToDate) {
+                    const { lastFetched } = _res.localData;
 
-                    return r;
-                });
-            }
+                    const diff = new Date().valueOf() - lastFetched;
+                    let remainingTime = outOfDateAfter - diff;
+
+                    this.syncInterval = this._initSyncInterval(remainingTime);
+
+                    setTimeout( () => {
+                        this.destroySyncer();
+
+                        this.syncInterval =
+                            this._initSyncInterval(outOfDateAfter);
+                    }, remainingTime < 1000 ? 1000 : remainingTime);
+
+                    _resolve();
+                } else {
+                    this._requestFreshData()
+                        .then(_response => {
+                            this.syncInterval =
+                                this._initSyncInterval(outOfDateAfter);
+
+                            _resolve();
+                        });
+                }
+            });
         });
     }
 
