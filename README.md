@@ -329,10 +329,8 @@ WeatherRepository.clearData().then( _prevData => {
 #### `.initSyncer()`
 Returns: `Void`
 
-Initiates a setInterval, which will countdown to the point when the data is out of date (based on the `outOfDateAfter` value) and will trigger a server request to get fresh data.
+Initiates a countdown-er to the point when the data gets out of date (based on the `outOfDateAfter` value) and triggers a (network) request to get fresh data.
 
-You might want to set the `outOfDateAfter` value, since otherwise, it will trigger a sync on every 1 second (otherwise, this might be a big network (performance) overhead).
-    
 ```javascript
 const WeatherRepository = new SuperRepo({
     outOfDateAfter: 5 * 60 * 1000 // 5 min
@@ -341,6 +339,12 @@ const WeatherRepository = new SuperRepo({
 
 WeatherRepository.initSyncer();
 ```
+
+There are 3 edge cases that prevent network (performance) overhead:
+
+- if `outOfDateAfter` value is not set (default value is `-1`), it will trigger a sync on every 1 second.
+- if `outOfDateAfter` value is `0`, it will trigger a sync on every 1 second.
+- if `outOfDateAfter` value is less than 1000 (1 second), it will trigger a sync on every 1 second instead.
 
 #### `.destroySyncer()`
 Returns: `Void`
