@@ -8,14 +8,19 @@ const SuperRepo = require('../lib/index.js');
 
 describe('Data Management', () => {
     var repository;
+    var clock;
 
-    before(() => {
+    beforeEach(() => {
+        clock = sinon.useFakeTimers();
         repository = new SuperRepo({
             storage: 'LOCAL_VARIABLE',
             name: 'test',
             outOfDateAfter: 3 * 1000, // 3 seconds
             request: () => new Promise(resolve => resolve(kindOfRegularResponse))
         });
+    });
+    afterEach(() => {
+        clock.restore();
     });
 
     it('Should resolve to the server-side data', done => {
@@ -86,7 +91,6 @@ describe('Data Management', () => {
     });
 
     it('Should wait if there is a Promise pending and should NOT fire another one', done => {
-        const clock = sinon.useFakeTimers();
         let networkRequestsCount = 0;
 
         const repo = new SuperRepo({
@@ -99,8 +103,6 @@ describe('Data Management', () => {
                 return new Promise(resolve => {
                     clock.tick(10000);
                     resolve(kindOfRegularResponse);
-
-                    clock.restore();
                 });
             }
         });
@@ -146,6 +148,99 @@ describe('Data Management', () => {
                     expect(_res.isDataUpToDate).to.equal(false);
                 }).then(done, done);
             });
+        });
+    });
+
+    it('Should consider the cached data as always up to date and issue only 1 (network) request', done => {
+        let networkRequestsCount = 0;
+
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 0,
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve => resolve('whatever'));
+            }
+        });
+
+        repo.getData().then( () => {
+            repo.getData().then( () => {
+                repo.getData().then(() => {
+                    repo.getData().then( result => {
+                        expect(networkRequestsCount).to.equal(1);
+                    }).then(done, done);
+                });
+            });
+        });
+    });
+
+    it('Should consider the cached data as always up to date', done => {
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 0,
+            request: () => new Promise(resolve => resolve('whatever'))
+        });
+
+        repo.getData().then( () => {
+            clock.tick(31 * 24 * 60 * 1000); // 1 month
+
+            repo.getDataUpToDateStatus().then( _res => {
+                expect(_res.isDataUpToDate).to.equal(true);
+            }).then(done, done);
+        });
+    });
+
+    it('Should consider the cached data as always up to date, unless is invalidated', done => {
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 0,
+            request: () => new Promise(resolve => resolve('whatever'))
+        });
+
+        repo.getData().then( () => {
+
+            repo.invalidateData().then(() => {
+                repo.getDataUpToDateStatus().then( _res => {
+                    expect(_res.isDataUpToDate).to.equal(false);
+                }).then(done, done);
+            });
+
+        });
+    });
+
+    it('Should consider the cached data as always up to date, unless is missing', done => {
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 0,
+            request: () => new Promise(resolve => resolve('whatever'))
+        });
+
+        repo.getDataUpToDateStatus().then( _res => {
+            expect(_res.isDataUpToDate).to.equal(false);
+        }).then(done, done);
+    });
+
+    it('Should consider the cached data as always up to date, unless is cleared', done => {
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 0,
+            request: () => new Promise(resolve => resolve('whatever'))
+        });
+
+        repo.getData().then( () => {
+
+            repo.clearData().then(() => {
+                repo.getDataUpToDateStatus().then( _res => {
+                    expect(_res.isDataUpToDate).to.equal(false);
+                }).then(done, done);
+            });
+
         });
     });
 });
