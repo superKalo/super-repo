@@ -344,7 +344,7 @@ There are 3 edge cases that prevent network (performance) overhead:
 
 - if `outOfDateAfter` value is not set (default value is `-1`), it will trigger a sync on every 1 second.
 - if `outOfDateAfter` value is `0`, it will trigger a sync on every 1 second.
-- if `outOfDateAfter` value is less than 1000 (1 second), it will trigger a sync on every 1 second instead.
+- if `outOfDateAfter` value is less than `1000` (1 second), it will trigger a sync on every 1 second instead.
 
 #### `.destroySyncer()`
 Returns: `Void`
