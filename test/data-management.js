@@ -1,5 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
+const sinon  = require('sinon');
 
 const kindOfRegularResponse = require('./fake-api/kind-of-regular-response.json');
 
@@ -85,6 +86,7 @@ describe('Data Management', () => {
     });
 
     it('Should wait if there is a Promise pending and should NOT fire another one', done => {
+        const clock = sinon.useFakeTimers();
         let networkRequestsCount = 0;
 
         const repo = new SuperRepo({
@@ -94,9 +96,12 @@ describe('Data Management', () => {
             request: () => {
                 networkRequestsCount++;
 
-                return new Promise(resolve =>
-                    setTimeout(() => resolve(kindOfRegularResponse), 1000)
-                );
+                return new Promise(resolve => {
+                    clock.tick(10000);
+                    resolve(kindOfRegularResponse);
+
+                    clock.restore();
+                });
             }
         });
 
