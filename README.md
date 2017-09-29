@@ -414,7 +414,7 @@ To generate the distribution files (in the `lib/` directory), do `npm run build`
 To run the tests and generate a test report (both, as output in the CLI and as HTML in the `coverage/` directory), do `npm run test`.
 
 > One little gotcha: in order for the test report to show the actual code line numbers (from `src/index.js`), rather than the code lines of the compiled one (from `src/index.js`), the test command first generates a build with a sourcemap inlined (in `lib/index.js`), then runs the actual tests and finally - undoes the changes into `lib/index.js` (`git checkout lib/index.js`).
-
+> 
 > Therefore, do not wonder why in case you do any changes to the distribution file in `lib/index.js`, after running the tests - they disappear!
 
 ## :oncoming_police_car: License
