@@ -133,21 +133,53 @@ describe('Data Management', () => {
         });
     });
 
-    it('Should have up to date data.', done => {
+    it('Should invalidate the data.', done => {
         repository.getData().then( () => {
-            repository.getDataUpToDateStatus().then(_res => {
-                expect(_res.isDataUpToDate).to.equal(true);
+            repository.invalidateData().then( () => {
+                expect(repository.data.isInvalid).to.equal(true);
             }).then(done, done);
         });
     });
 
-    it('Should invalidate the data.', done => {
+    it('Should have up to date data.', done => {
         repository.getData().then( () => {
+            repository.getDataUpToDateStatus().then(_res => {
+                expect(_res.isDataUpToDate).to.equal(true);
+                expect(_res.localData.data).to.equal(kindOfRegularResponse);
+            }).then(done, done);
+        });
+    });
+
+    it('Should initially have outdated data.', done => {
+        repository.getDataUpToDateStatus().then(_res => {
+            expect(_res.isDataUpToDate).to.equal(false);
+            expect(_res.localData).to.equal(null);
+        }).then(done, done);
+    });
+
+    it('Should have outdated data, when data gets invalidated.', done => {
+        repository.getData().then( () => {
+
             repository.invalidateData().then( () => {
                 repository.getDataUpToDateStatus().then(_res => {
                     expect(_res.isDataUpToDate).to.equal(false);
+                    expect(_res.localData.data).to.equal(kindOfRegularResponse);
                 }).then(done, done);
             });
+
+        });
+    });
+
+    it('Should have outdated data, when data gets cleared.', done => {
+        repository.getData().then( () => {
+
+            repository.clearData().then( () => {
+                repository.getDataUpToDateStatus().then(_res => {
+                    expect(_res.isDataUpToDate).to.equal(false);
+                    expect(_res.localData).to.equal(null);
+                }).then(done, done);
+            });
+
         });
     });
 

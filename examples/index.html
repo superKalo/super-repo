@@ -10,6 +10,7 @@
 <p>Open the source code and check it out.</p>
 
 <button id="get" type="button">Get data</button>
+<button id="status" type="button">Get data up-to-date status</button>
 
 <button id="invalidate" type="button">Invalidate data</button>
 <button id="clear" type="button">Clear (delete) data</button>
@@ -66,6 +67,11 @@
     document.getElementById('get').addEventListener('click', () => {
         WeatherRepository.getData().then(
             _r => console.log(`It is ${_r.temperature} degrees Fahrenheit.`)
+        );
+    });
+    document.getElementById('status').addEventListener('click', () => {
+        WeatherRepository.getDataUpToDateStatus().then(
+            _r => console.log('Is data up to date?', _r.isDataUpToDate)
         );
     });
 
