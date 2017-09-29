@@ -233,4 +233,35 @@ describe('Data Sync', () => {
             expect(networkRequestsCount).to.equal(13);
         }).then(done, done);
     });
+
+    it('Should initiate a background data sync process on every 1 second when `outOfDateAfter` option is set to 0', done => {
+        let networkRequestsCount = 0;
+
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 0,
+            request: () => {
+                networkRequestsCount++;
+
+                return new Promise(resolve => resolve({ whatever: true }));
+            }
+        });
+
+        repo.initSyncer().then( () => {
+            expect(networkRequestsCount).to.equal(1);
+
+            clock.tick(500);
+            expect(networkRequestsCount).to.equal(1);
+
+            clock.tick(500);
+            expect(networkRequestsCount).to.equal(2);
+
+            clock.tick(1000);
+            expect(networkRequestsCount).to.equal(3);
+
+            clock.tick(10 * 1000);
+            expect(networkRequestsCount).to.equal(13);
+        }).then(done, done);
+    });
 });
