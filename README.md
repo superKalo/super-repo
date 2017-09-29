@@ -71,6 +71,7 @@ We're ready to define our `SuperRepo`sitory:
  * 1. Define where you want to store the data, in this example, in the LocalStorage.
  *
  * 2. Then - define a name of your data repository, it's used for the LocalStorage key.
+ *    Should be unique!
  *
  * 3. Define when the data will get out of date.
  *
@@ -132,7 +133,7 @@ None.
 #### `name` [required]
 Type: `String`
 
-Name of the Repository. It's used for Local Storage or Browser Local Storage item name.
+Name of the Repository. Should be unique! It's used for Local Storage or Browser Local Storage item name.
 
 #### `request` [required]
 Type: `Function` that returns a `Promise`, that resolves to `Array` or `Object`, based on your server response :nerd_face: 
