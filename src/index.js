@@ -236,6 +236,14 @@ class SuperRepo {
                         isDataUpToDate: false,
                         localData: _localStore
                     });
+                } else if (outOfDateAfter === 0) {
+                    // Setting the `outOfDateAfter` config to 0
+                    // allows users to mark the data as always up to date
+                    // (only if not invalidated or missing, of course)
+                    _resolve({
+                        isDataUpToDate: true,
+                        localData: _localStore
+                    });
                 } else {
                     const { lastFetched } = _localStore;
                     const isLimitExceeded =
