@@ -417,5 +417,9 @@ To run the tests and generate a test report (both, as output in the CLI and as H
 > 
 > Therefore, do not wonder why in case you do any changes to the distribution file in `lib/index.js`, after running the tests - they disappear!
 
+## :zap: Projects Powered by <img src="https://user-images.githubusercontent.com/2548061/30693332-c07f5844-9ed7-11e7-970d-17498f7c8e62.png" height="20" alt="Super R" /> SuperRepo
+- [Irrationally Yours Chrome Extension](https://www.producthunt.com/posts/irrationally-yours-chrome-extension)
+- ... want your project showcased here? Just shoot me an [e-mail](mailto://me@superkalo.com)!
+
 ## :oncoming_police_car: License
 The code and the documentation are released under the [MIT License](https://github.com/superKalo/repository/blob/master/LICENSE).
