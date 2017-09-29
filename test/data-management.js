@@ -145,6 +145,7 @@ describe('Data Management', () => {
         repository.getData().then( () => {
             repository.getDataUpToDateStatus().then(_res => {
                 expect(_res.isDataUpToDate).to.equal(true);
+                expect(_res.localData.data).to.equal(kindOfRegularResponse);
             }).then(done, done);
         });
     });
@@ -152,6 +153,7 @@ describe('Data Management', () => {
     it('Should initially have outdated data.', done => {
         repository.getDataUpToDateStatus().then(_res => {
             expect(_res.isDataUpToDate).to.equal(false);
+            expect(_res.localData).to.equal(null);
         }).then(done, done);
     });
 
@@ -161,6 +163,7 @@ describe('Data Management', () => {
             repository.invalidateData().then( () => {
                 repository.getDataUpToDateStatus().then(_res => {
                     expect(_res.isDataUpToDate).to.equal(false);
+                    expect(_res.localData.data).to.equal(kindOfRegularResponse);
                 }).then(done, done);
             });
 
@@ -173,6 +176,7 @@ describe('Data Management', () => {
             repository.clearData().then( () => {
                 repository.getDataUpToDateStatus().then(_res => {
                     expect(_res.isDataUpToDate).to.equal(false);
+                    expect(_res.localData).to.equal(null);
                 }).then(done, done);
             });
 
