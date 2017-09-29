@@ -37,5 +37,7 @@ GitHub.sublime-settings
 
 # Project-specific
 src/
-bower.json
 examples/
+coverage/
+test/
+bower.json
