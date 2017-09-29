@@ -327,7 +327,7 @@ WeatherRepository.clearData().then( _prevData => {
 ```
 
 #### `.getDataUpToDateStatus()`
-Returns: `Promise`, that resolves to `isDataUpToDate` {Boolean} and `localData` (Object) - the currently cached data
+Returns: `Promise`, that resolves to `isDataUpToDate` {Boolean} and `localData` (Object) - the currently cached data (full structure with all flags included)
 
 ```javascript
 const WeatherRepository = new SuperRepo({ /* ... */ });
