@@ -145,7 +145,7 @@ describe('Data Management', () => {
         repository.getData().then( () => {
             repository.getDataUpToDateStatus().then(_res => {
                 expect(_res.isDataUpToDate).to.equal(true);
-                expect(_res.localData.data).to.equal(kindOfRegularResponse);
+                expect(_res.localData).to.equal(kindOfRegularResponse);
             }).then(done, done);
         });
     });
@@ -163,7 +163,7 @@ describe('Data Management', () => {
             repository.invalidateData().then( () => {
                 repository.getDataUpToDateStatus().then(_res => {
                     expect(_res.isDataUpToDate).to.equal(false);
-                    expect(_res.localData.data).to.equal(kindOfRegularResponse);
+                    expect(_res.localData).to.equal(kindOfRegularResponse);
                 }).then(done, done);
             });
 
