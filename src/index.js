@@ -229,12 +229,16 @@ class SuperRepo {
                 if (isDataMissing) {
                     _resolve({
                         isDataUpToDate: false,
-                        localData: _localStore
+                        lastFetched: null,
+                        isInvalid: false,
+                        localData: null
                     });
                 } else if (_localStore.isInvalid) {
                     _resolve({
                         isDataUpToDate: false,
-                        localData: _localStore
+                        lastFetched: _localStore.lastFetched,
+                        isInvalid: true,
+                        localData: _localStore.data
                     });
                 } else if (outOfDateAfter === 0) {
                     // Setting the `outOfDateAfter` config to 0
@@ -242,7 +246,9 @@ class SuperRepo {
                     // (only if not invalidated or missing, of course)
                     _resolve({
                         isDataUpToDate: true,
-                        localData: _localStore
+                        lastFetched: _localStore.lastFetched,
+                        isInvalid: _localStore.isInvalid,
+                        localData: _localStore.data
                     });
                 } else {
                     const { lastFetched } = _localStore;
@@ -251,7 +257,9 @@ class SuperRepo {
 
                     _resolve({
                         isDataUpToDate: ! isLimitExceeded,
-                        localData: _localStore
+                        lastFetched: _localStore.lastFetched,
+                        isInvalid: _localStore.isInvalid,
+                        localData: _localStore.data
                     });
                 }
             });
@@ -365,7 +373,7 @@ class SuperRepo {
                     this.promise = null;
                     this.isPromisePending = false;
 
-                    _resolve(_res.localData.data);
+                    _resolve(_res.localData);
                 } else {
                     this._requestFreshData()
                         .then(_response => {
@@ -416,9 +424,7 @@ class SuperRepo {
                  * initiate a regular setInterval.
                  */
                 if (_res.isDataUpToDate) {
-                    const { lastFetched } = _res.localData;
-
-                    const diff = new Date().valueOf() - lastFetched;
+                    const diff = new Date().valueOf() - _res.lastFetched;
                     let remainingTime = outOfDateAfter - diff;
 
                     this.syncInterval = this._initSyncInterval(remainingTime);
