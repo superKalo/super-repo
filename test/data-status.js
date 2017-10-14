@@ -23,6 +23,66 @@ describe('Data Status', () => {
         clock.restore();
     });
 
+    it('Should have up to date data.', done => {
+        repository.getData().then( () => {
+            repository.getDataUpToDateStatus().then(_res => {
+                expect(_res.isDataUpToDate).to.equal(true);
+            }).then(done, done);
+        });
+    });
+
+    it('Should have all the data status params for up to date data.', done => {
+        repository.getData().then( () => {
+            repository.getDataUpToDateStatus().then(_res => {
+                expect(_res.isDataUpToDate).to.equal(true);
+                expect(_res.isInvalid).to.equal(false);
+                expect(_res.localData).to.equal(kindOfRegularResponse);
+
+                expect(_res.lastFetched).to.equal(repository.data.lastFetched);
+                expect(_res.lastFetched).to.be.closeTo(new Date().valueOf(), 2000);
+            }).then(done, done);
+        });
+    });
+
+    it('Should initially have outdated data.', done => {
+        repository.getDataUpToDateStatus().then(_res => {
+            expect(_res.isDataUpToDate).to.equal(false);
+            expect(_res.isInvalid).to.equal(false);
+            expect(_res.lastFetched).to.equal(null);
+            expect(_res.localData).to.equal(null);
+        }).then(done, done);
+    });
+
+    it('Should have outdated data, when data gets invalidated.', done => {
+        repository.getData().then( () => {
+
+            repository.invalidateData().then( () => {
+                repository.getDataUpToDateStatus().then(_res => {
+                    expect(_res.isDataUpToDate).to.equal(false);
+                    expect(_res.isInvalid).to.equal(true);
+                    expect(_res.lastFetched).to.equal(repository.data.lastFetched);
+                    expect(_res.localData).to.equal(kindOfRegularResponse);
+                }).then(done, done);
+            });
+
+        });
+    });
+
+    it('Should have outdated data, when data gets cleared.', done => {
+        repository.getData().then( () => {
+
+            repository.clearData().then( () => {
+                repository.getDataUpToDateStatus().then(_res => {
+                    expect(_res.isDataUpToDate).to.equal(false);
+                    expect(_res.isInvalid).to.equal(false);
+                    expect(_res.lastFetched).to.equal(null);
+                    expect(_res.localData).to.equal(null);
+                }).then(done, done);
+            });
+
+        });
+    });
+
     it('Should consider the cached data as always up to date', done => {
         const repo = new SuperRepo({
             storage: 'LOCAL_VARIABLE',
@@ -91,46 +151,4 @@ describe('Data Status', () => {
         });
     });
 
-
-    it('Should have up to date data.', done => {
-        repository.getData().then( () => {
-            repository.getDataUpToDateStatus().then(_res => {
-                expect(_res.isDataUpToDate).to.equal(true);
-                expect(_res.localData).to.equal(kindOfRegularResponse);
-            }).then(done, done);
-        });
-    });
-
-    it('Should initially have outdated data.', done => {
-        repository.getDataUpToDateStatus().then(_res => {
-            expect(_res.isDataUpToDate).to.equal(false);
-            expect(_res.localData).to.equal(null);
-        }).then(done, done);
-    });
-
-    it('Should have outdated data, when data gets invalidated.', done => {
-        repository.getData().then( () => {
-
-            repository.invalidateData().then( () => {
-                repository.getDataUpToDateStatus().then(_res => {
-                    expect(_res.isDataUpToDate).to.equal(false);
-                    expect(_res.localData).to.equal(kindOfRegularResponse);
-                }).then(done, done);
-            });
-
-        });
-    });
-
-    it('Should have outdated data, when data gets cleared.', done => {
-        repository.getData().then( () => {
-
-            repository.clearData().then( () => {
-                repository.getDataUpToDateStatus().then(_res => {
-                    expect(_res.isDataUpToDate).to.equal(false);
-                    expect(_res.localData).to.equal(null);
-                }).then(done, done);
-            });
-
-        });
-    });
 });
