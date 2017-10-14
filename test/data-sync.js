@@ -264,4 +264,21 @@ describe('Data Sync', () => {
             expect(networkRequestsCount).to.equal(13);
         }).then(done, done);
     });
+
+    it('Should fire a success callback as soon as the background data sync process gets fresh data.', done => {
+        const callback = sinon.spy();
+
+        repository.initSyncer(callback).then( () => {
+            expect(callback.callCount).to.equal(1);
+
+            clock.tick(TIMEFRAME - 1);
+            expect(callback.callCount).to.equal(1);
+
+            clock.tick(1);
+            expect(callback.callCount).to.equal(2);
+
+            clock.tick(TIMEFRAME);
+            expect(callback.callCount).to.equal(3);
+        }).then(done, done);
+    });
 });
