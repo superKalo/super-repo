@@ -265,8 +265,10 @@ describe('Data Sync', () => {
         }).then(done, done);
     });
 
-    it('Should fire a success callback as soon as the background data sync process gets fresh data.', done => {
+    it('Should fire a success callback as soon as the background data sync process gets fresh data. Use case: there is no data.', done => {
         const callback = sinon.spy();
+
+        expect(callback.callCount).to.equal(0);
 
         repository.initSyncer(callback).then( () => {
             expect(callback.callCount).to.equal(1);
@@ -280,5 +282,30 @@ describe('Data Sync', () => {
             clock.tick(TIMEFRAME);
             expect(callback.callCount).to.equal(3);
         }).then(done, done);
+    });
+
+    it('Should fire a success callback as soon as the background data sync process gets fresh data. Use case: there is data.', done => {
+        const callback = sinon.spy();
+
+        repository.getData().then(() => {
+            expect(callback.callCount).to.equal(0);
+
+            repository.initSyncer(callback).then( () => {
+                expect(callback.callCount).to.equal(0);
+
+                clock.tick(TIMEFRAME - 1);
+                expect(callback.callCount).to.equal(0);
+
+                clock.tick(1);
+                expect(callback.callCount).to.equal(1);
+
+                clock.tick(TIMEFRAME);
+                expect(callback.callCount).to.equal(2);
+
+                clock.tick(10 * TIMEFRAME);
+                expect(callback.callCount).to.equal(12);
+            }).then(done, done);
+
+        });
     });
 });
