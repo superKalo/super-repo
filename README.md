@@ -423,6 +423,7 @@ To run the tests and generate a test report (both, as output in the CLI and as H
 
 ## :zap: Projects Powered by <img src="https://user-images.githubusercontent.com/2548061/30693332-c07f5844-9ed7-11e7-970d-17498f7c8e62.png" height="20" alt="Super R" /> SuperRepo
 - [Irrationally Yours Chrome Extension](https://www.producthunt.com/posts/irrationally-yours-chrome-extension)
+- [Crypto Tab](https://crypto-tab.com)
 - ... want your project showcased here? Just shoot me an [e-mail](mailto://me@superkalo.com)!
 
 ## :oncoming_police_car: License
