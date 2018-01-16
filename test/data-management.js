@@ -165,4 +165,20 @@ describe('Data Management', () => {
             });
         });
     });
+
+    it('Should reject the promise', done => {
+        const repo = new SuperRepo({
+            storage: 'LOCAL_VARIABLE',
+            name: 'test',
+            outOfDateAfter: 0,
+            request: () => {
+                return new Promise((resolve, reject) => reject('whatever'));
+            }
+        });
+
+        repo.getData()
+            .catch( () => {
+                expect(true).to.equal(true);
+            }).then(done, done);
+    });
 });

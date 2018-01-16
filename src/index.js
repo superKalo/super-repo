@@ -366,7 +366,7 @@ class SuperRepo {
          */
         this.isPromisePending = true;
 
-        return this.promise = new Promise(_resolve => {
+        return this.promise = new Promise((_resolve, _reject) => {
 
             this.getDataUpToDateStatus().then(_res => {
                 if (_res.isDataUpToDate) {
@@ -382,7 +382,8 @@ class SuperRepo {
 
                             return _response;
                         })
-                        .then(_resolve);
+                        .then(_resolve)
+                        .catch(_reject);
                 }
             });
 
@@ -416,7 +417,7 @@ class SuperRepo {
         const { outOfDateAfter } = this.config;
 
         return new Promise(_resolve => {
-            this.getDataUpToDateStatus().then(_res => {
+            this.getDataUpToDateStatus().then((_res, _rej) => {
 
                 /**
                  * If data is up to date, determine when it gets outdated.
