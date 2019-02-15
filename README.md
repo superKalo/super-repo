@@ -425,6 +425,7 @@ To run the tests and generate a test report (both, as output in the CLI and as H
 - [Irrationally Yours Chrome Extension](https://www.producthunt.com/posts/irrationally-yours-chrome-extension)
 - [Crypto Tab](https://crypto-tab.com)
 - [WeatherTab](https://chrome.google.com/webstore/detail/weathertab-new-tab-browse/ndmbacelaedejokjkolgipmdkblnibbo)
+- [Child Care & Before-After School Program Locator in the City of Toronto, Canada](https://www.toronto.ca/community-people/children-parenting/children-programs-activities/licensed-child-care/child-care-locator/)
 - ... want your project showcased here? Just shoot me an [e-mail](mailto://me@superkalo.com)!
 
 ## :oncoming_police_car: License
