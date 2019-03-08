@@ -396,13 +396,13 @@ class SuperRepo {
      * @param  {Number} _interval - the interval, in milliseconds
      * @return {Void}
      */
-    _initSyncInterval(_interval) {
+    _initSyncInterval(_interval, _cb) {
         // Do not initiate intervals which are quicker then a second,
         // otherwise, this might be a big network (performance) overhead.
         const interval = _interval < 1000 ? 1000: _interval;
 
         return setInterval(
-            () => this._requestFreshData(), interval
+            () => this._requestFreshData().then(_cb), interval
         );
     }
 
@@ -413,7 +413,7 @@ class SuperRepo {
      *
      * @return {Void}
      */
-    initSyncer() {
+    initSyncer(_cb = () => {}) {
         const { outOfDateAfter } = this.config;
 
         return new Promise(_resolve => {
@@ -428,13 +428,14 @@ class SuperRepo {
                     const diff = new Date().valueOf() - _res.lastFetched;
                     let remainingTime = outOfDateAfter - diff;
 
-                    this.syncInterval = this._initSyncInterval(remainingTime);
+                    this.syncInterval =
+                        this._initSyncInterval(remainingTime, _cb);
 
                     setTimeout( () => {
                         this.destroySyncer();
 
                         this.syncInterval =
-                            this._initSyncInterval(outOfDateAfter);
+                            this._initSyncInterval(outOfDateAfter, _cb);
                     }, remainingTime < 1000 ? 1000 : remainingTime);
 
                     _resolve();
@@ -442,8 +443,9 @@ class SuperRepo {
                     this._requestFreshData()
                         .then(_response => {
                             this.syncInterval =
-                                this._initSyncInterval(outOfDateAfter);
+                                this._initSyncInterval(outOfDateAfter, _cb);
 
+                            _cb();
                             _resolve();
                         });
                 }
